@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setUser } from "@/store/users/user-slice";
 import { InputField } from "@/app/components/auth-forms/input-field";
+import { LoadingSpinner } from "@/app/components/loading-spinner";
 
 interface Errors {
   usernameError: string;
@@ -19,6 +20,7 @@ export default function Page() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
   const [signData, setSignData] = useState<SignupData>({
     username: "",
     email: "",
@@ -87,6 +89,7 @@ export default function Page() {
     e.preventDefault();
 
     setSent(true);
+    setLoading(true);
 
     const usernameRes =
       signData.username === "" ? "Přezdívka musí být vyplněna" : "";
@@ -107,6 +110,7 @@ export default function Page() {
         passwordError: passRes,
         passwordError2: pass2Res,
       }));
+      setLoading(false);
       return;
     }
 
@@ -122,6 +126,7 @@ export default function Page() {
     localStorage.setItem("token", data.id);
     dispatch(setUser(data.userData));
     router.push("/");
+    setLoading(false);
   };
 
   return (
@@ -167,11 +172,11 @@ export default function Page() {
           type="submit"
           className="rounded-sm bg-lime-600 py-2 text-white hover:bg-lime-700"
         >
-          Registrovat
+          {loading ? <LoadingSpinner /> : "Registrovat"}
         </button>
       </form>
       <p className="self-start">
-        Máš už účet ?, můžeš se přihlásit{" "}
+        Máš už účet ? můžeš se přihlásit{" "}
         <a className="text-lime-700 hover:text-lime-800" href="/prihlaseni">
           zde
         </a>
