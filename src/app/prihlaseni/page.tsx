@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@/store/users/user-slice";
 import { useRouter } from "next/navigation";
 import { InputField } from "@/app/components/auth-forms/input-field";
+import { LoadingSpinner } from "@/app/components/loading-spinner";
 
 interface Errors {
   emailError: string;
@@ -16,6 +17,7 @@ export default function Page() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
   const [signData, setSignData] = useState<SigninData>({
     email: "",
     password: "",
@@ -61,6 +63,7 @@ export default function Page() {
     e.preventDefault();
 
     setSent(true);
+    setLoading(true);
 
     const emailRes = signData.email === "" ? "Email musí být vyplněn" : "";
     const passRes = signData.password === "" ? "Heslo musí být vyplněno" : "";
@@ -70,6 +73,7 @@ export default function Page() {
         emailError: emailRes,
         passwordError: passRes,
       }));
+      setLoading(false);
       return;
     }
 
@@ -83,6 +87,7 @@ export default function Page() {
 
     if (!res.ok) {
       setFailedLogin("Špatně zadaný email nebo heslo");
+      setLoading(false);
       return;
     }
 
@@ -90,6 +95,7 @@ export default function Page() {
     localStorage.setItem("token", data.id);
     dispatch(setUser(data.userData));
     router.push("/");
+    setLoading(false);
   };
 
   return (
@@ -122,7 +128,7 @@ export default function Page() {
           type="submit"
           className="rounded-sm bg-lime-600 py-2 text-white hover:bg-lime-700"
         >
-          Přihlásit
+          {loading ? <LoadingSpinner /> : "Přihlásit"}
         </button>
       </form>
       <p className="self-start">
