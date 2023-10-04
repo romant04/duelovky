@@ -16,10 +16,15 @@ export const ThemeSwitcher = () => {
     return null;
   }
 
+  const dark =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
   return (
     <button
       className="w-20 cursor-pointer rounded-full p-3 text-sm text-lime-600 hover:text-lime-700"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(dark ? "light" : "dark")}
     >
       {theme === "light" ? (
         <FontAwesomeIcon size="xl" icon={faMoon} />
