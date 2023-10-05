@@ -10,18 +10,15 @@ export interface SigninData {
   password: string;
 }
 
-export interface UserFirebaseResponse {
-  email: string;
-  password: string;
-  username: string;
-}
-
 export interface User {
   email: string;
   username: string;
 }
 
-export interface SigninApiResponse {
-  id: string;
-  userData: User;
+export interface SupabaseUser {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  uid: string;
 }
