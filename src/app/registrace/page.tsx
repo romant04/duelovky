@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { setUser } from "@/store/users/user-slice";
 import { InputField } from "@/app/components/auth-forms/input-field";
 import { LoadingSpinner } from "@/app/components/loading-spinner";
+import { toast } from "react-toastify";
 
 interface Errors {
   usernameError: string;
@@ -146,6 +147,7 @@ export default function Page() {
     localStorage.setItem("token", data.uid);
     dispatch(setUser(data));
     router.push("/");
+    toast.success("Byl si úspěšně zaregistrován");
     setLoading(false);
   };
 
