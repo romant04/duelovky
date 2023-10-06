@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { User } from "@/types/auth";
+import { SupabaseUser } from "@/types/auth";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { navbarDialogClose } from "@/store/navbar-dialog/navbar-dialog-slice";
 
 interface Props {
-  user: User | null;
+  user: SupabaseUser | null;
 }
 
 export const NavbarUser: FC<Props> = ({ user }) => {

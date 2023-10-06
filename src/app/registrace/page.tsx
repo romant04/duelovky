@@ -122,6 +122,26 @@ export default function Page() {
       body: JSON.stringify(signData),
     });
 
+    if (!res.ok) {
+      const jsonedRes = await res.json();
+      const error = jsonedRes.error;
+      const invalidEmail = error.includes("email");
+      const invalidUsername: boolean = error.includes("username");
+
+      setErrors(() => ({
+        usernameError: invalidUsername
+          ? "Tato přezdívka je již používána"
+          : usernameRes,
+        emailError: invalidEmail ? "Tento email již je používán" : emailRes,
+        passwordError: passRes,
+        passwordError2: pass2Res,
+      }));
+
+      setLoading(false);
+
+      return;
+    }
+
     const data = (await res.json()) as SupabaseUser;
     localStorage.setItem("token", data.uid);
     dispatch(setUser(data));

@@ -10,11 +10,6 @@ export interface SigninData {
   password: string;
 }
 
-export interface User {
-  email: string;
-  username: string;
-}
-
 export interface SupabaseUser {
   id: number;
   username: string;

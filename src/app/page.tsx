@@ -1,18 +1,14 @@
 "use client";
 import io, { Socket } from "socket.io-client";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SupabaseUser } from "@/types/auth";
 import { setUser } from "@/store/users/user-slice";
-import { RootState } from "@/store/store";
 
 let socket: Socket;
 
 export default function Home() {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user.user);
-
-  console.log(user);
 
   const auth = async (token: string) => {
     const res = await fetch(`/api/users/tokenCheck?token=${token}`);
