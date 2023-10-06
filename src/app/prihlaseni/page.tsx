@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
-import { SigninApiResponse, SigninData } from "@/types/auth";
+import { SigninData, SupabaseUser } from "@/types/auth";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/users/user-slice";
 import { useRouter } from "next/navigation";
@@ -77,7 +77,7 @@ export default function Page() {
       return;
     }
 
-    const res = await fetch("/api/firebase/signin", {
+    const res = await fetch("/api/users/signin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -91,9 +91,9 @@ export default function Page() {
       return;
     }
 
-    const data = (await res.json()) as SigninApiResponse;
-    localStorage.setItem("token", data.id);
-    dispatch(setUser(data.userData));
+    const data = (await res.json()) as SupabaseUser;
+    localStorage.setItem("token", data.uid);
+    dispatch(setUser(data));
     router.push("/");
     setLoading(false);
   };

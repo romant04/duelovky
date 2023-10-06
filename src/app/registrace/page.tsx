@@ -2,7 +2,7 @@
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import { validateEmail, validatePassword } from "@/utils/formUtils";
-import { SigninApiResponse, SignupData } from "@/types/auth";
+import { SignupData, SupabaseUser } from "@/types/auth";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setUser } from "@/store/users/user-slice";
@@ -114,7 +114,7 @@ export default function Page() {
       return;
     }
 
-    const res = await fetch("/api/firebase/signup", {
+    const res = await fetch("/api/users/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -122,9 +122,29 @@ export default function Page() {
       body: JSON.stringify(signData),
     });
 
-    const data = (await res.json()) as SigninApiResponse;
-    localStorage.setItem("token", data.id);
-    dispatch(setUser(data.userData));
+    if (!res.ok) {
+      const jsonedRes = await res.json();
+      const error = jsonedRes.error;
+      const invalidEmail = error.includes("email");
+      const invalidUsername: boolean = error.includes("username");
+
+      setErrors(() => ({
+        usernameError: invalidUsername
+          ? "Tato přezdívka je již používána"
+          : usernameRes,
+        emailError: invalidEmail ? "Tento email již je používán" : emailRes,
+        passwordError: passRes,
+        passwordError2: pass2Res,
+      }));
+
+      setLoading(false);
+
+      return;
+    }
+
+    const data = (await res.json()) as SupabaseUser;
+    localStorage.setItem("token", data.uid);
+    dispatch(setUser(data));
     router.push("/");
     setLoading(false);
   };

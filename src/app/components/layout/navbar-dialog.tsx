@@ -3,13 +3,13 @@ import { clsx } from "clsx";
 import { ThemeSwitcher } from "@/app/components/layout/theme-switcher";
 import { NavbarUser } from "@/app/components/layout/navbar-user";
 import { NavbarLink } from "@/app/components/layout/navbar-link";
-import { User } from "@/types/auth";
+import { SupabaseUser } from "@/types/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { navbarDialogClose } from "@/store/navbar-dialog/navbar-dialog-slice";
 
 interface Props {
-  user: User | null;
+  user: SupabaseUser | null;
 }
 
 export const NavbarDialog: FC<Props> = ({ user }) => {
