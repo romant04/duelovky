@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import React from "react";
 import { Inter } from "next/font/google";
 import { Navbar } from "@/app/components/layout/navbar";
-import { StoreProvider } from "@/store/store-provider";
+import { StoreProvider } from "@/app/providers/store-provider";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/app/providers/theme-provider";
+import { ToastProvider } from "@/app/providers/toast-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             />
             <Navbar />
             <div className="m-auto mt-10 w-[max(80%,320px)]">{children}</div>
+            <ToastProvider />
           </ThemeProvider>
         </StoreProvider>
       </body>

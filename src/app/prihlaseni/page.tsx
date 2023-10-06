@@ -7,6 +7,7 @@ import { setUser } from "@/store/users/user-slice";
 import { useRouter } from "next/navigation";
 import { InputField } from "@/app/components/auth-forms/input-field";
 import { LoadingSpinner } from "@/app/components/loading-spinner";
+import { toast } from "react-toastify";
 
 interface Errors {
   emailError: string;
@@ -27,7 +28,6 @@ export default function Page() {
     passwordError: "",
   });
   const [sent, setSent] = useState(false);
-  const [failedLogin, setFailedLogin] = useState("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -86,7 +86,7 @@ export default function Page() {
     });
 
     if (!res.ok) {
-      setFailedLogin("Špatně zadaný email nebo heslo");
+      toast.error("Špatně zadaný email nebo heslo");
       setLoading(false);
       return;
     }
@@ -95,13 +95,13 @@ export default function Page() {
     localStorage.setItem("token", data.uid);
     dispatch(setUser(data));
     router.push("/");
+    toast.success("Byl si úspěšně přihlášen");
     setLoading(false);
   };
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center justify-center gap-8">
       <div className="flex flex-col gap-3">
-        <p className="text-sm text-red-500">{failedLogin}</p>
         <h1 className="text-4xl">Přihlášení</h1>
         <div>
           Prihlaš se a můžeš začít prozkoumávat naše hry a vyzvat své kamarády
