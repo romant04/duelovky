@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,10 +11,30 @@ import { NavbarUser } from "@/app/components/layout/navbar-user";
 import { NavbarLink } from "@/app/components/layout/navbar-link";
 import { NavbarDialog } from "@/app/components/layout/navbar-dialog";
 import { navbarDialogOpen } from "@/store/navbar-dialog/navbar-dialog-slice";
+import { SupabaseUser } from "@/types/auth";
+import { setUser } from "@/store/users/user-slice";
 
 export const Navbar: FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((store: RootState) => store.user);
+
+  const auth = async (token: string) => {
+    const res = await fetch(`/api/users/tokenCheck?token=${token}`);
+    if (!res.ok) return;
+
+    const data = (await res.json()) as SupabaseUser;
+    if (data.uid !== token) return;
+    dispatch(setUser(data));
+  };
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const token = localStorage.getItem("token");
+      if (token) {
+        void auth(token);
+      }
+    }
+  }, []);
 
   const mdUp = useMediaQuery("(min-width: 800px)");
 
