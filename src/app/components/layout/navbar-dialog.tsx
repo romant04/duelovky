@@ -44,7 +44,7 @@ export const NavbarDialog: FC<Props> = ({ user }) => {
         <div className="flex flex-col items-center gap-16 text-lg">
           <NavbarLink text="Hry" link="/" />
           <NavbarLink text="Žebříček" link="/zebricek" />
-          <NavbarLink text="Podpora" link="/podpora" />
+          <NavbarLink text="Přátelé" link="/pratele" />
         </div>
         <div className="flex items-center gap-5">
           <ThemeSwitcher />
