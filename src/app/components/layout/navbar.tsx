@@ -30,7 +30,7 @@ export const Navbar: FC = () => {
           <div className="flex gap-16 text-lg">
             <NavbarLink text="Hry" link="/" />
             <NavbarLink text="Žebříček" link="/zebricek" />
-            <NavbarLink text="Podpora" link="/podpora" />
+            <NavbarLink text="Přátelé" link="/pratele" />
           </div>
           <div className="flex items-center gap-5">
             <ThemeSwitcher />
