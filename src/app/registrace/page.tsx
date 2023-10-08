@@ -1,7 +1,11 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
-import { validateEmail, validatePassword } from "@/utils/formUtils";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "@/utils/formUtils";
 import { SignupData, SupabaseUser } from "@/types/auth";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -46,7 +50,7 @@ export default function Page() {
     if (!sent) return;
 
     if (name === "username") {
-      const res = value === "" ? "Přezdívka musí být vyplněna" : "";
+      const res = validateUsername(value);
       setErrors((prev) => ({
         ...prev,
         usernameError: res,
@@ -92,8 +96,7 @@ export default function Page() {
     setSent(true);
     setLoading(true);
 
-    const usernameRes =
-      signData.username === "" ? "Přezdívka musí být vyplněna" : "";
+    const usernameRes = validateUsername(signData.username);
     const emailRes = validateEmail(signData.email);
     const passRes = validatePassword(signData.password);
     const pass2Res =

@@ -1,3 +1,15 @@
+export const validateUsername = (username: string) => {
+  if (username === "") {
+    return "Přezdívka musí být vyplněna";
+  }
+
+  if (username.length > 16) {
+    return "Přezdívka nemsí mít více než 16 znaků";
+  }
+
+  return "";
+};
+
 export const validateEmail = (email: string) => {
   if (email == "") {
     return "Email musí být vyplněn";
