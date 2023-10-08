@@ -36,7 +36,7 @@ export const Navbar: FC = () => {
     }
   }, []);
 
-  const mdUp = useMediaQuery("(min-width: 800px)");
+  const mdUp = useMediaQuery("(min-width: 960px)");
 
   return (
     <>

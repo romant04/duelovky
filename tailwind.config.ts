@@ -16,6 +16,9 @@ const config: Config = {
       colors: {
         "gray-750": "#26344b",
       },
+      screens: {
+        md: "960px",
+      },
     },
   },
   darkMode: "class",
