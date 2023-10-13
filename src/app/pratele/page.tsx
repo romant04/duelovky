@@ -9,8 +9,6 @@ import { FriendTab } from "@/app/pratele/components/friend-tab";
 import { FriendRequestDialog } from "@/app/pratele/components/friend-request-dialog";
 import { FriendRequestTab } from "@/app/pratele/components/friend-request-tab";
 import useSWR from "swr";
-import { useMediaQuery } from "@/utils/useMediaQuery";
-import { clsx } from "clsx";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -36,8 +34,6 @@ export default function Page() {
       ? friends.map((x) => x.email)
       : [];
 
-  const mdUp = useMediaQuery("(min-width: 960px)");
-
   return (
     <>
       <FriendRequestDialog
@@ -48,12 +44,7 @@ export default function Page() {
         username={activeUser?.username}
       />
       {user ? (
-        <div
-          className={clsx(
-            "flex items-start justify-around gap-5 px-2",
-            mdUp ? "flex-row" : "flex-col items-center"
-          )}
-        >
+        <div className="flex flex-col items-center justify-around gap-5 px-2 md:flex-row md:items-start">
           <AddFriendsForm
             me_email={user.email}
             sendFriendRequest={sendFriendRequest}
