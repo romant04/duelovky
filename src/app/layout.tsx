@@ -7,6 +7,7 @@ import { StoreProvider } from "@/app/providers/store-provider";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/app/providers/theme-provider";
 import { ToastProvider } from "@/app/providers/toast-provider";
+import { PageLoader } from "@/app/components/page-loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
               speed={200}
               height={4}
             />
+            <PageLoader />
             <Navbar />
             <div className="m-auto mt-10 w-[max(80%,320px)]">{children}</div>
             <ToastProvider />

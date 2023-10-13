@@ -9,6 +9,7 @@ import { FriendTab } from "@/app/pratele/components/friend-tab";
 import { FriendRequestDialog } from "@/app/pratele/components/friend-request-dialog";
 import { FriendRequestTab } from "@/app/pratele/components/friend-request-tab";
 import useSWR from "swr";
+import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -16,13 +17,22 @@ export default function Page() {
   const [activeUser, setActiveUser] = useState<SupabaseUser>();
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state: RootState) => state.user.user);
-  const { data: friends, mutate } = useSWR<SupabaseUser[]>(
+  const {
+    data: friends,
+    mutate,
+    isLoading,
+  } = useSWR<SupabaseUser[]>(
     `/api/friends/getFriends?token=${user?.id}`,
     fetcher
   );
-  const { data: friendRequest, mutate: requestsMutate } = useSWR<
-    RecievedFriendRequestData[]
-  >(`/api/friends/getFriendRequests?id=${user?.id}`, fetcher);
+  const {
+    data: friendRequest,
+    mutate: requestsMutate,
+    isLoading: requestsLoading,
+  } = useSWR<RecievedFriendRequestData[]>(
+    `/api/friends/getFriendRequests?id=${user?.id}`,
+    fetcher
+  );
 
   const sendFriendRequest = (supposedFriend: SupabaseUser) => {
     setActiveUser(supposedFriend);
@@ -55,7 +65,9 @@ export default function Page() {
               <h1 className="mb-2 text-start text-2xl font-light text-lime-600">
                 Moji přátelé
               </h1>
-              {friends && friends?.length > 0 ? (
+              {requestsLoading ? (
+                <LoadingSpinnerGreen />
+              ) : friends && friends?.length > 0 ? (
                 <div>
                   {friends.map((friend: SupabaseUser) => (
                     <FriendTab
@@ -74,7 +86,9 @@ export default function Page() {
               <h1 className="mb-2 text-start text-2xl font-light text-lime-600">
                 Žádosti o přátelství
               </h1>
-              {friendRequest && friendRequest?.length > 0 ? (
+              {isLoading ? (
+                <LoadingSpinnerGreen />
+              ) : friendRequest && friendRequest?.length > 0 ? (
                 <div className="flex max-h-96 flex-col overflow-auto px-2">
                   {friendRequest.map((request) => (
                     <>

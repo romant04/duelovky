@@ -3,6 +3,7 @@ import { SupabaseUser } from "@/types/auth";
 import { useMediaQuery } from "@/utils/useMediaQuery";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 
 interface Props {
   me_email: string;
@@ -19,6 +20,7 @@ export const AddFriendsForm: FC<Props> = ({
   const [filteredUsers, setFilteredUsers] = useState<SupabaseUser[]>();
   const [searchTerm, setSearchTerm] = useState("");
   const [searched, setSearched] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const getUsers = async () => {
     const res = await fetch("/api/users/getUsers");
@@ -26,6 +28,7 @@ export const AddFriendsForm: FC<Props> = ({
     const data = await res.json();
     setUsers(data);
     setFilteredUsers(data);
+    setLoading(false);
   };
 
   const search = () => {
@@ -97,6 +100,7 @@ export const AddFriendsForm: FC<Props> = ({
           </p>
         )}
         <div className="mt-8 flex flex-col gap-3">
+          {loading && <LoadingSpinnerGreen />}
           {reducedFilteredUsers?.map((user) => (
             <div
               className="flex items-center justify-between bg-gray-500 px-4 py-2 dark:bg-gray-600"
