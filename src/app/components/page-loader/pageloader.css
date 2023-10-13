@@ -1,0 +1,36 @@
+.dots {
+    position: relative;
+    width: max(200px, 30%);
+    margin: auto;
+}
+.dot {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    background: #56ce1b;
+}
+.dot-1 {
+    animation: dot-anim 1s 0.2s infinite ease;
+    left: 0;
+}
+.dot-2 {
+    animation: dot-anim 1s 0.5s infinite ease;
+    left: 50%;
+}
+.dot-3 {
+    animation: dot-anim 1s 0.75s infinite ease;
+    left: 100%;
+}
+
+@keyframes dot-anim {
+    0% {
+        bottom: -50px;
+    }
+    50% {
+        bottom: 100px;
+    }
+    100% {
+        bottom: -50px;
+    }
+}

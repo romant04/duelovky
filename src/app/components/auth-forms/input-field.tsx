@@ -24,7 +24,7 @@ export const InputField: FC<inputFieldData> = ({
         name={name}
         onChange={handleInputChange}
         className={clsx(
-          "w-full rounded-sm border-[1px] p-2",
+          "w-full rounded-sm border-[1px] p-2 dark:bg-gray-200 dark:text-black",
           error ? "border-red-500" : "border-gray-800"
         )}
         type={type}

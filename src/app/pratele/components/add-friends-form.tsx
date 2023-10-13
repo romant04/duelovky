@@ -3,6 +3,7 @@ import { SupabaseUser } from "@/types/auth";
 import { useMediaQuery } from "@/utils/useMediaQuery";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 
 interface Props {
   me_email: string;
@@ -19,6 +20,7 @@ export const AddFriendsForm: FC<Props> = ({
   const [filteredUsers, setFilteredUsers] = useState<SupabaseUser[]>();
   const [searchTerm, setSearchTerm] = useState("");
   const [searched, setSearched] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const getUsers = async () => {
     const res = await fetch("/api/users/getUsers");
@@ -26,6 +28,7 @@ export const AddFriendsForm: FC<Props> = ({
     const data = await res.json();
     setUsers(data);
     setFilteredUsers(data);
+    setLoading(false);
   };
 
   const search = () => {
@@ -55,8 +58,8 @@ export const AddFriendsForm: FC<Props> = ({
   const mdUp = useMediaQuery("(min-width: 968px)");
 
   return (
-    <div className="w-full max-w-2xl overflow-auto rounded-sm bg-gray-200 dark:bg-gray-750">
-      <div className="bg-lime-600 p-2 dark:bg-lime-700">
+    <div className="w-full max-w-2xl overflow-auto rounded-sm bg-gray-600 text-white dark:bg-gray-750">
+      <div className="bg-lime-700 p-2">
         <h2 className="text-xl">Přidat přítele</h2>
       </div>
       <div className="p-6">
@@ -70,15 +73,12 @@ export const AddFriendsForm: FC<Props> = ({
           />
           <div className="flex gap-4">
             <button
-              className="bg-lime-600 p-2 hover:bg-lime-700 dark:bg-lime-700 dark:hover:bg-lime-600"
+              className="bg-lime-700 p-2 hover:bg-lime-600"
               onClick={search}
             >
               Vyhledat
             </button>
-            <button
-              className="bg-red-600 p-2 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
-              onClick={reset}
-            >
+            <button className="bg-red-700 p-2 hover:bg-red-600" onClick={reset}>
               Reset
             </button>
           </div>
@@ -100,9 +100,10 @@ export const AddFriendsForm: FC<Props> = ({
           </p>
         )}
         <div className="mt-8 flex flex-col gap-3">
+          {loading && <LoadingSpinnerGreen />}
           {reducedFilteredUsers?.map((user) => (
             <div
-              className="flex items-center justify-between bg-gray-300 px-4 py-2 dark:bg-gray-600"
+              className="flex items-center justify-between bg-gray-500 px-4 py-2 dark:bg-gray-600"
               key={user.uid}
             >
               <div className="flex items-center gap-2 md:gap-8">
