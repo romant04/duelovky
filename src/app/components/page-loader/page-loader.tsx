@@ -1,8 +1,8 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
-import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 import { clsx } from "clsx";
+import "./pageloader.css";
 
 export const PageLoader: FC = () => {
   const [mounted, setMounted] = useState(false);
@@ -10,22 +10,25 @@ export const PageLoader: FC = () => {
   useEffect(() => {
     const mountingTimeout = setTimeout(() => {
       setMounted(true);
-    }, 500);
+    }, 3500);
     return () => {
       clearTimeout(mountingTimeout);
     };
   }, []);
 
-  // TODO: Replace with custom loading spinner
   return (
     <div
       className={clsx(
         mounted
           ? "invisible h-0 w-0"
-          : "fixed left-0 top-0 z-[9999999] flex h-screen w-screen items-center justify-center bg-black"
+          : "fixed left-0 top-0 z-[9999999] flex h-screen w-screen items-center justify-center bg-gray-750"
       )}
     >
-      <LoadingSpinnerGreen />
+      <div className="dots">
+        <div className="dot dot-1"></div>
+        <div className="dot dot-2"></div>
+        <div className="dot dot-3"></div>
+      </div>
     </div>
   );
 };
