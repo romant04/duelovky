@@ -10,8 +10,7 @@ import { FriendRequestDialog } from "@/app/pratele/components/friend-request-dia
 import { FriendRequestTab } from "@/app/pratele/components/friend-request-tab";
 import useSWR from "swr";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from "@/app/providers/swr-fetcher";
 
 export default function Page() {
   const [activeUser, setActiveUser] = useState<SupabaseUser>();
