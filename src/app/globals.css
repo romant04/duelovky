@@ -12,3 +12,12 @@ html.dark {
 html.light {
     @apply bg-gray-100
 }
+
+.layout-container {
+    display: grid;
+    grid-template-areas:
+        "nav"
+        "content";
+    min-height: 100vh;
+    grid-template-rows: auto 1fr;
+}

@@ -13,6 +13,7 @@ import { NavbarDialog } from "@/app/components/layout/navbar/navbar-dialog";
 import { navbarDialogOpen } from "@/store/navbar-dialog/navbar-dialog-slice";
 import { SupabaseUser } from "@/types/auth";
 import { setUser } from "@/store/users/user-slice";
+import { InnerLink } from "@/app/components/layout/navbar/inner-link";
 
 export const Navbar: FC = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ export const Navbar: FC = () => {
         void auth(token);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const mdUp = useMediaQuery("(min-width: 960px)");
@@ -50,7 +52,12 @@ export const Navbar: FC = () => {
           <div className="flex gap-16 text-lg">
             <NavbarLink text="Hry" link="/" />
             <NavbarLink text="Žebříček" link="/zebricek" />
-            <NavbarLink text="Přátelé" link="/pratele" />
+            <NavbarLink text="Přátelé" link="/pratele">
+              <div className="flex w-full flex-col gap-2 p-2">
+                <InnerLink text="Moji kamarádi" link="/pratele" />
+                <InnerLink text="Chat" link="/chat" />
+              </div>
+            </NavbarLink>
           </div>
           <div className="flex items-center gap-5">
             <ThemeSwitcher />
