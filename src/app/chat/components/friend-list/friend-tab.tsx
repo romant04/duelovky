@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { selectChat } from "@/store/chat/chat-slice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { clsx } from "clsx";
 
 interface Props {
   id: number;
@@ -9,6 +11,7 @@ interface Props {
 
 export const FriendTab: FC<Props> = ({ id, name }) => {
   const dispatch = useDispatch();
+  const { openedChat } = useSelector((state: RootState) => state.chatLayout);
 
   const handleChatSelect = () => {
     dispatch(
@@ -21,11 +24,21 @@ export const FriendTab: FC<Props> = ({ id, name }) => {
 
   return (
     <div
-      className="flex cursor-pointer items-center justify-between gap-8 bg-gray-750 p-4 hover:bg-gray-700"
+      className={clsx(
+        openedChat?.friend.id === id
+          ? "bg-lime-600"
+          : "cursor-pointer bg-gray-750 hover:bg-gray-700",
+        "flex items-center justify-between gap-8 p-4"
+      )}
       onClick={handleChatSelect}
     >
       <div className="flex items-center gap-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500">
+        <div
+          className={clsx(
+            openedChat?.friend.id === id ? "bg-gray-750" : "bg-lime-500",
+            "flex h-10 w-10 items-center justify-center rounded-full"
+          )}
+        >
           {name.charAt(0).toUpperCase()}
         </div>
         <p>{name}</p>

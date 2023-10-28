@@ -2,15 +2,19 @@
 
 import { FC, FormEvent, useEffect, useState } from "react";
 import { ChatBubble } from "@/app/chat/components/chat-bubble";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Message } from "@/types/chat";
 import { supabase } from "../../../../supabase";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 import { toast } from "react-toastify";
-import { NotSigned } from "@/app/hoc/not-signed";
+import { useMediaQuery } from "@/utils/useMediaQuery";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { resetChat } from "@/store/chat/chat-slice";
 
-const Chat: FC = () => {
+export const Chat: FC = () => {
+  const dispatch = useDispatch();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>();
   const [loading, setLoading] = useState(false);
@@ -79,6 +83,10 @@ const Chat: FC = () => {
     setCurrentMessage("");
   };
 
+  const closeChat = () => {
+    dispatch(resetChat());
+  };
+
   useEffect(() => {
     if (openedChat) {
       setLoading(true);
@@ -86,12 +94,29 @@ const Chat: FC = () => {
       setLoading(false);
       void subscribeToChat();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openedChat]);
 
-  console.log(messages);
+  const mdUp = useMediaQuery("(min-width: 968px)");
 
   return (
-    <div className="flex w-3/4 flex-col justify-between bg-gray-900 p-4">
+    <div className="flex h-full w-full flex-col bg-gray-900 p-4 md:w-3/4">
+      {!mdUp && (
+        <div className="flex items-center gap-5">
+          <FontAwesomeIcon
+            onClick={closeChat}
+            className="cursor-pointer"
+            size="xl"
+            icon={faArrowLeft}
+          />
+          <div className="flex items-center gap-5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500">
+              {openedChat?.friend.username.charAt(0).toUpperCase()}
+            </div>
+            <p>{openedChat?.friend.username}</p>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         {loading ? (
           <LoadingSpinnerGreen />
@@ -108,7 +133,7 @@ const Chat: FC = () => {
           ))
         )}
       </div>
-      <form className="flex w-full gap-1" onSubmit={sendMessage}>
+      <form className="mt-auto flex w-full gap-1" onSubmit={sendMessage}>
         <input
           value={currentMessage}
           onChange={(e) => setCurrentMessage(e.target.value)}
@@ -126,5 +151,3 @@ const Chat: FC = () => {
     </div>
   );
 };
-
-export default NotSigned(Chat);
