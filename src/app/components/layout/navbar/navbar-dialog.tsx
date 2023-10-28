@@ -1,12 +1,13 @@
 import { FC } from "react";
 import { clsx } from "clsx";
-import { ThemeSwitcher } from "@/app/components/layout/theme-switcher";
-import { NavbarUser } from "@/app/components/layout/navbar-user";
-import { NavbarLink } from "@/app/components/layout/navbar-link";
+import { ThemeSwitcher } from "@/app/components/layout/navbar/theme-switcher";
+import { NavbarUser } from "@/app/components/layout/navbar/navbar-user";
+import { NavbarLink } from "@/app/components/layout/navbar/navbar-link";
 import { SupabaseUser } from "@/types/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { navbarDialogClose } from "@/store/navbar-dialog/navbar-dialog-slice";
+import { InnerLink } from "@/app/components/layout/navbar/inner-link";
 
 interface Props {
   user: SupabaseUser | null;
@@ -44,7 +45,12 @@ export const NavbarDialog: FC<Props> = ({ user }) => {
         <div className="flex flex-col items-center gap-16 text-lg">
           <NavbarLink text="Hry" link="/" />
           <NavbarLink text="Žebříček" link="/zebricek" />
-          <NavbarLink text="Přátelé" link="/pratele" />
+          <NavbarLink text="Přátelé" link="/pratele">
+            <div className="flex w-full flex-col gap-2 p-2">
+              <InnerLink text="Moji kamarádi" link="/pratele" />
+              <InnerLink text="Chat" link="/chat" />
+            </div>
+          </NavbarLink>
         </div>
         <div className="flex items-center gap-5">
           <ThemeSwitcher />

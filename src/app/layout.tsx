@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import React from "react";
 import { Inter } from "next/font/google";
-import { Navbar } from "@/app/components/layout/navbar";
+import { Navbar } from "@/app/components/layout/navbar/navbar";
 import { StoreProvider } from "@/app/providers/store-provider";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/app/providers/theme-provider";
@@ -34,8 +34,10 @@ export default function RootLayout({
               height={4}
             />
             <PageLoader />
-            <Navbar />
-            <div className="m-auto mt-10 w-[max(80%,320px)]">{children}</div>
+            <div className="layout-container">
+              <Navbar />
+              {children}
+            </div>
             <ToastProvider />
           </ThemeProvider>
         </StoreProvider>

@@ -10,10 +10,10 @@ import { FriendRequestDialog } from "@/app/pratele/components/friend-request-dia
 import { FriendRequestTab } from "@/app/pratele/components/friend-request-tab";
 import useSWR from "swr";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
+import { fetcher } from "@/app/providers/swr-fetcher";
+import { NotSigned } from "@/app/hoc/not-signed";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-export default function Page() {
+function Page() {
   const [activeUser, setActiveUser] = useState<SupabaseUser>();
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state: RootState) => state.user.user);
@@ -54,7 +54,7 @@ export default function Page() {
         username={activeUser?.username}
       />
       {user ? (
-        <div className="flex flex-col items-center justify-around gap-5 px-2 md:flex-row md:items-start">
+        <div className="mt-10 flex flex-col items-center justify-around gap-5 px-2 md:flex-row md:items-start">
           <AddFriendsForm
             me_email={user.email}
             sendFriendRequest={sendFriendRequest}
@@ -111,12 +111,10 @@ export default function Page() {
           </div>
         </div>
       ) : (
-        <div>
-          <h1 className="text-center text-3xl font-light text-red-600">
-            Nejsi přihlášen, pro přidávání přátel se nejprve přihlaš
-          </h1>
-        </div>
+        <></>
       )}
     </>
   );
 }
+
+export default NotSigned(Page);

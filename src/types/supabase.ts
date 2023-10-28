@@ -9,24 +9,52 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      friend_request: {
+      chat: {
         Row: {
-          created_at: string;
-          id: number;
+          created_at: string | null;
           message: string | null;
           receiver_id: number;
           sender_id: number;
         };
         Insert: {
-          created_at?: string;
-          id?: number;
+          created_at?: string | null;
           message?: string | null;
           receiver_id: number;
           sender_id: number;
         };
         Update: {
-          created_at?: string;
-          id?: number;
+          created_at?: string | null;
+          message?: string | null;
+          receiver_id?: number;
+          sender_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chat_receiver_id_fkey";
+            columns: ["receiver_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_sender_id_fkey";
+            columns: ["sender_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      friend_request: {
+        Row: {
+          message: string | null;
+          receiver_id: number;
+          sender_id: number;
+        };
+        Insert: {
+          message?: string | null;
+          receiver_id: number;
+          sender_id: number;
+        };
+        Update: {
           message?: string | null;
           receiver_id?: number;
           sender_id?: number;
@@ -48,17 +76,14 @@ export interface Database {
       };
       friends: {
         Row: {
-          id: number;
           user1_id: number;
           user2_id: number;
         };
         Insert: {
-          id?: number;
           user1_id: number;
           user2_id: number;
         };
         Update: {
-          id?: number;
           user1_id?: number;
           user2_id?: number;
         };
@@ -79,7 +104,6 @@ export interface Database {
       };
       users: {
         Row: {
-          created_at: string;
           email: string | null;
           id: number;
           password: string | null;
@@ -87,7 +111,6 @@ export interface Database {
           username: string | null;
         };
         Insert: {
-          created_at?: string;
           email?: string | null;
           id?: number;
           password?: string | null;
@@ -95,7 +118,6 @@ export interface Database {
           username?: string | null;
         };
         Update: {
-          created_at?: string;
           email?: string | null;
           id?: number;
           password?: string | null;

@@ -3,17 +3,22 @@
 import { FC, useEffect, useState } from "react";
 import { clsx } from "clsx";
 import "./pageloader.css";
+import { useDispatch } from "react-redux";
+import { Mount } from "@/store/mount/mount-slice";
 
 export const PageLoader: FC = () => {
   const [mounted, setMounted] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const mountingTimeout = setTimeout(() => {
       setMounted(true);
+      dispatch(Mount());
     }, 3500);
     return () => {
       clearTimeout(mountingTimeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

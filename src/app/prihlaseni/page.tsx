@@ -100,7 +100,7 @@ export default function Page() {
   };
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center justify-center gap-8">
+    <div className="mx-auto mt-10 flex max-w-xl flex-col justify-start gap-8">
       <div className="flex flex-col gap-3">
         <h1 className="text-4xl">Přihlášení</h1>
         <div>
