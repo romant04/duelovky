@@ -27,6 +27,7 @@ export const Chat: FC = () => {
     );
     const res = (await data.json()) as Message[];
     setMessages(res);
+    setLoading(false);
   };
 
   const subscribeToChat = async () => {
@@ -91,7 +92,6 @@ export const Chat: FC = () => {
     if (openedChat) {
       setLoading(true);
       void fetchMessages();
-      setLoading(false);
       void subscribeToChat();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
