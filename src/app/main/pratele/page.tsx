@@ -5,9 +5,9 @@ import { RootState } from "@/store/store";
 import { useState } from "react";
 import { SupabaseUser } from "@/types/auth";
 import { AddFriendsForm } from "./components/add-friends-form";
-import { FriendTab } from "@/app/pratele/components/friend-tab";
-import { FriendRequestDialog } from "@/app/pratele/components/friend-request-dialog";
-import { FriendRequestTab } from "@/app/pratele/components/friend-request-tab";
+import { FriendTab } from "@/app/main/pratele/components/friend-tab";
+import { FriendRequestDialog } from "@/app/main/pratele/components/friend-request-dialog";
+import { FriendRequestTab } from "@/app/main/pratele/components/friend-request-tab";
 import useSWR from "swr";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 
