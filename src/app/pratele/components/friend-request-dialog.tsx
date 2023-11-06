@@ -61,7 +61,7 @@ export const FriendRequestDialog: FC<Props> = ({
           : "pointer-events-none h-0 w-0 opacity-0"
       )}
     >
-      <div className="w-2/5 bg-gray-750 text-white dark:bg-gray-800">
+      <div className="w-2/5 bg-gray-800 text-white">
         <div className="flex justify-between bg-lime-700 px-4 py-2">
           <h2 className="text-lg">
             Žádost uživateli <span className="font-semibold">{username}</span>
@@ -72,7 +72,7 @@ export const FriendRequestDialog: FC<Props> = ({
           <p>Zpráva (max. 500 znaků): </p>
           <textarea
             value={message}
-            className="w-full resize-none p-2 text-black dark:text-white"
+            className="w-full resize-none p-2 text-white"
             rows={5}
             onChange={updateMessage}
           />
