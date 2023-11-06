@@ -12,12 +12,14 @@ import { useMediaQuery } from "@/utils/useMediaQuery";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { resetChat } from "@/store/chat/chat-slice";
+import { LoadingSpinner } from "@/app/components/loading-spinner";
 
 export const Chat: FC = () => {
   const dispatch = useDispatch();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>();
   const [loading, setLoading] = useState(false);
+  const [sendLoading, setSendLoading] = useState(false);
   const { user } = useSelector((state: RootState) => state.user);
   const { openedChat } = useSelector((state: RootState) => state.chatLayout);
 
@@ -62,17 +64,26 @@ export const Chat: FC = () => {
 
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (sendLoading) {
+      return;
+    }
 
     if (currentMessage === "") {
       toast.error("Nemůžeš poslat prázdnou zprávu");
       return;
     }
 
+    const temp = currentMessage;
+
+    setCurrentMessage("");
+
     const messageData = {
       id: user?.id,
       receiver_id: openedChat?.friend.id,
-      message: currentMessage,
+      message: temp,
     };
+
+    setSendLoading(true);
     await fetch(`/api/chat/sendMessage`, {
       method: "POST",
       headers: {
@@ -80,8 +91,7 @@ export const Chat: FC = () => {
       },
       body: JSON.stringify(messageData),
     });
-
-    setCurrentMessage("");
+    setSendLoading(false);
   };
 
   const closeChat = () => {
@@ -145,7 +155,7 @@ export const Chat: FC = () => {
           type="submit"
           className="w-1/4 rounded-md bg-lime-600 hover:bg-lime-500"
         >
-          Poslat
+          {sendLoading ? <LoadingSpinner /> : "Poslat"}
         </button>
       </form>
     </div>
