@@ -5,7 +5,6 @@ import { Inter } from "next/font/google";
 import { Navbar } from "@/app/components/layout/navbar/navbar";
 import { StoreProvider } from "@/app/providers/store-provider";
 import NextTopLoader from "nextjs-toploader";
-import { ThemeProvider } from "@/app/providers/theme-provider";
 import { ToastProvider } from "@/app/providers/toast-provider";
 import { PageLoader } from "@/app/components/page-loader/page-loader";
 
@@ -25,21 +24,19 @@ export default function RootLayout({
     <html lang="cs">
       <body className={inter.className}>
         <StoreProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <NextTopLoader
-              color="#65a30d"
-              crawlSpeed={200}
-              easing="ease"
-              speed={200}
-              height={4}
-            />
-            <PageLoader />
-            <div className="layout-container">
-              <Navbar />
-              {children}
-            </div>
-            <ToastProvider />
-          </ThemeProvider>
+          <NextTopLoader
+            color="#65a30d"
+            crawlSpeed={200}
+            easing="ease"
+            speed={200}
+            height={4}
+          />
+          <PageLoader />
+          <div className="layout-container">
+            <Navbar />
+            {children}
+          </div>
+          <ToastProvider />
         </StoreProvider>
       </body>
     </html>

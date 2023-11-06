@@ -117,7 +117,7 @@ export const Chat: FC = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 pb-2">
         {loading ? (
           <LoadingSpinnerGreen />
         ) : (
