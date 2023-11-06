@@ -72,7 +72,7 @@ export const FriendRequestDialog: FC<Props> = ({
           <p>Zpráva (max. 500 znaků): </p>
           <textarea
             value={message}
-            className="w-full resize-none p-2 text-white"
+            className="w-full resize-none bg-gray-700 p-2 text-white"
             rows={5}
             onChange={updateMessage}
           />
