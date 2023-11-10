@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { InputField } from "@/app/components/auth-forms/input-field";
 import { LoadingSpinner } from "@/app/components/loading-spinner";
 import { toast } from "react-toastify";
+import { setCookie } from "cookies-next";
 
 interface Errors {
   emailError: string;
@@ -92,7 +93,7 @@ export default function Page() {
     }
 
     const data = (await res.json()) as SupabaseUser;
-    localStorage.setItem("token", data.uid);
+    setCookie("token", data.uid, { maxAge: 5 * 60 * 60 });
     dispatch(setUser(data));
     router.push("/");
     toast.success("Byl si úspěšně přihlášen");

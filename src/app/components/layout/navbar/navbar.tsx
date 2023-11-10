@@ -13,6 +13,7 @@ import { navbarDialogOpen } from "@/store/navbar-dialog/navbar-dialog-slice";
 import { SupabaseUser } from "@/types/auth";
 import { setUser } from "@/store/users/user-slice";
 import { InnerLink } from "@/app/components/layout/navbar/inner-link";
+import { getCookie } from "cookies-next";
 
 export const Navbar: FC = () => {
   const dispatch = useDispatch();
@@ -28,12 +29,12 @@ export const Navbar: FC = () => {
   };
 
   useEffect(() => {
-    if (typeof window !== undefined) {
-      const token = localStorage.getItem("token");
-      if (token) {
-        void auth(token);
-      }
+    const token = getCookie("token");
+    console.log(token);
+    if (token) {
+      void auth(token);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
