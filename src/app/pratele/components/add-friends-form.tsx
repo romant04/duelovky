@@ -97,12 +97,12 @@ export const AddFriendsForm: FC<Props> = ({
               : "výsledků"}
           </p>
         )}
-        <div className="mt-8 flex flex-col gap-3">
+        <div className="mt-8 flex max-h-[300px] flex-col gap-3 overflow-auto">
           {loading && <LoadingSpinnerGreen />}
           {reducedFilteredUsers?.map((user) => (
             <div
               className="flex items-center justify-between bg-gray-600 px-4 py-2"
-              key={user.uid}
+              key={user.id}
             >
               <div className="flex items-center gap-2 md:gap-8">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500">

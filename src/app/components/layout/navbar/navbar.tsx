@@ -30,7 +30,6 @@ export const Navbar: FC = () => {
 
   useEffect(() => {
     const token = getCookie("token");
-    console.log(token);
     if (token) {
       void auth(token);
     }

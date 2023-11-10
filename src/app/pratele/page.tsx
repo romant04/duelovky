@@ -72,7 +72,7 @@ function Page() {
                   {friends.map((friend: SupabaseUser) => (
                     <FriendTab
                       user={friend}
-                      key={friend.uid}
+                      key={friend.id}
                       my_id={user.id}
                       friend_mutate={mutate}
                     />
