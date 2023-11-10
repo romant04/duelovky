@@ -19,6 +19,11 @@ export default async function tokenCheck(
       return res.status(400).json({ error: "wrong token" });
     }
 
+    // @ts-ignore
+    if (decoded.exp < Math.floor(Date.now() / 1000)) {
+      return res.status(400).json({ error: "Expired token" });
+    }
+
     const { data, error } = await supabase
       .from("users")
       .select("*")
