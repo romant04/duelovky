@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, FormEvent, useEffect, useState } from "react";
-import { ChatBubble } from "@/app/chat/components/chat-bubble";
+import { ChatBubble } from "./chat-bubble";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Message } from "@/types/chat";

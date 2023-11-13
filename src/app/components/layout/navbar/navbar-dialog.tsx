@@ -1,12 +1,12 @@
 import { FC } from "react";
 import { clsx } from "clsx";
-import { NavbarUser } from "@/app/components/layout/navbar/navbar-user";
-import { NavbarLink } from "@/app/components/layout/navbar/navbar-link";
+import { NavbarUser } from "./navbar-user";
+import { NavbarLink } from "./navbar-link";
 import { SupabaseUser } from "@/types/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { navbarDialogClose } from "@/store/navbar-dialog/navbar-dialog-slice";
-import { InnerLink } from "@/app/components/layout/navbar/inner-link";
+import { InnerLink } from "./inner-link";
 
 interface Props {
   user: SupabaseUser | null;

@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useMediaQuery } from "@/utils/useMediaQuery";
-import { NavbarUser } from "@/app/components/layout/navbar/navbar-user";
-import { NavbarLink } from "@/app/components/layout/navbar/navbar-link";
-import { NavbarDialog } from "@/app/components/layout/navbar/navbar-dialog";
+import { NavbarUser } from "./navbar-user";
+import { NavbarLink } from "./navbar-link";
+import { NavbarDialog } from "./navbar-dialog";
 import { navbarDialogOpen } from "@/store/navbar-dialog/navbar-dialog-slice";
 import { SupabaseUser } from "@/types/auth";
 import { setUser } from "@/store/users/user-slice";
-import { InnerLink } from "@/app/components/layout/navbar/inner-link";
+import { InnerLink } from "./inner-link";
 import { getCookie } from "cookies-next";
 
 export const Navbar: FC = () => {
