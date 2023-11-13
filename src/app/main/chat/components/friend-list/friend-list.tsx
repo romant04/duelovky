@@ -6,7 +6,7 @@ import { SupabaseUser } from "@/types/auth";
 import { fetcher } from "@/app/providers/swr-fetcher";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { FriendTab } from "@/app/chat/components/friend-list/friend-tab";
+import { FriendTab } from "./friend-tab";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 import { useMediaQuery } from "@/utils/useMediaQuery";
 
