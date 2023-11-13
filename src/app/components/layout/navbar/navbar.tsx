@@ -14,6 +14,7 @@ import { SupabaseUser } from "@/types/auth";
 import { setUser } from "@/store/users/user-slice";
 import { InnerLink } from "@/app/components/layout/navbar/inner-link";
 import { getCookie } from "cookies-next";
+import { clsx } from "clsx";
 
 export const Navbar: FC = () => {
   const dispatch = useDispatch();
@@ -44,7 +45,12 @@ export const Navbar: FC = () => {
       <NavbarDialog user={user.user} />
 
       {mdUp ? (
-        <div className="flex items-center justify-between px-12 py-6">
+        <div
+          className={clsx(
+            "flex items-center justify-between px-12 py-6",
+            "navbar"
+          )}
+        >
           <h1 className="text-4xl font-light text-gray-200">Duelovky</h1>
           <div className="flex gap-16 text-lg">
             <NavbarLink text="Hry" link="/" />
