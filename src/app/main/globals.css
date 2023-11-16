@@ -6,9 +6,6 @@ body {
     min-height: 100vh;
     position: relative;
 }
-html.dark {
-    @apply bg-gray-800
-}
-html.light {
-    @apply bg-gray-100
+html {
+    @apply bg-gray-800 text-white
 }

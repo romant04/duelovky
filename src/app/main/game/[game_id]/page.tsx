@@ -49,8 +49,10 @@ export default function Page({ params }: { params: { game_id: string } }) {
   return (
     <>
       <MatchmakingDialog isOpen={isOpen} stopMatchmaking={stopMatchmaking} />
-      <div className="flex gap-8">
-        <div className="h-80 w-80 bg-red-600">Placeholder for image</div>
+      <div className="mx-auto mt-5 flex gap-8 md:w-4/5">
+        <div className="h-80 min-h-[20em] w-80 min-w-[20em] bg-red-600">
+          Placeholder for image
+        </div>
         <div className="flex max-w-3xl flex-col gap-4">
           <h1 className="text-4xl">{gameData?.title}</h1>
           <p className="text-lg">{gameData?.long_description}</p>
@@ -58,15 +60,17 @@ export default function Page({ params }: { params: { game_id: string } }) {
             {gameData?.tags.map((tag) => <GameTag key={tag} tag={tag} />)}
           </div>
           <div className="mt-auto flex gap-4">
-            <button
-              className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"
-              onClick={startMatchmaking}
-            >
-              Hrát
-            </button>
-            <button className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500">
-              Vyzvat kamárada
-            </button>
+            <div className="flex gap-4">
+              <button
+                className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"
+                onClick={startMatchmaking}
+              >
+                Hrát
+              </button>
+              <button className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500">
+                Vyzvat kamárada
+              </button>
+            </div>
           </div>
         </div>
       </div>

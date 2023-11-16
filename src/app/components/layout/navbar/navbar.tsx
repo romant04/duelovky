@@ -6,13 +6,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useMediaQuery } from "@/utils/useMediaQuery";
-import { ThemeSwitcher } from "@/app/components/layout/theme-switcher";
-import { NavbarUser } from "@/app/components/layout/navbar-user";
-import { NavbarLink } from "@/app/components/layout/navbar-link";
-import { NavbarDialog } from "@/app/components/layout/navbar-dialog";
+import { NavbarUser } from "@/app/components/layout/navbar/navbar-user";
+import { NavbarLink } from "@/app/components/layout/navbar/navbar-link";
+import { NavbarDialog } from "@/app/components/layout/navbar/navbar-dialog";
 import { navbarDialogOpen } from "@/store/navbar-dialog/navbar-dialog-slice";
 import { SupabaseUser } from "@/types/auth";
 import { setUser } from "@/store/users/user-slice";
+import { InnerLink } from "@/app/components/layout/navbar/inner-link";
+import { getCookie } from "cookies-next";
+import { clsx } from "clsx";
 
 export const Navbar: FC = () => {
   const dispatch = useDispatch();
@@ -28,12 +30,12 @@ export const Navbar: FC = () => {
   };
 
   useEffect(() => {
-    if (typeof window !== undefined) {
-      const token = localStorage.getItem("token");
-      if (token) {
-        void auth(token);
-      }
+    const token = getCookie("token");
+    if (token) {
+      void auth(token);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const mdUp = useMediaQuery("(min-width: 960px)");
@@ -43,27 +45,29 @@ export const Navbar: FC = () => {
       <NavbarDialog user={user.user} />
 
       {mdUp ? (
-        <div className="flex items-center justify-between px-12 py-6">
-          <h1 className="text-4xl font-light text-gray-800 dark:text-gray-200">
-            Duelovky
-          </h1>
+        <div
+          className={clsx(
+            "flex items-center justify-between px-12 py-6",
+            "navbar"
+          )}
+        >
+          <h1 className="text-4xl font-light text-gray-200">Duelovky</h1>
           <div className="flex gap-16 text-lg">
             <NavbarLink text="Hry" link="/" />
             <NavbarLink text="Žebříček" link="/zebricek" />
-            <NavbarLink text="Přátelé" link="/pratele" />
+            <NavbarLink text="Přátelé" link="/pratele">
+              <div className="flex w-full flex-col gap-2 p-2">
+                <InnerLink text="Moji kamarádi" link="/pratele" />
+                <InnerLink text="Chat" link="/chat" />
+              </div>
+            </NavbarLink>
           </div>
-          <div className="flex items-center gap-5">
-            <ThemeSwitcher />
-            <NavbarUser user={user.user} />
-          </div>
+          <NavbarUser user={user.user} />
         </div>
       ) : (
         <div className="flex items-center justify-between px-6 py-6">
-          <h1 className="text-3xl font-light text-gray-800 dark:text-gray-200">
-            Duelovky
-          </h1>
+          <h1 className="text-3xl font-light text-gray-200">Duelovky</h1>
           <div className="flex items-center">
-            <ThemeSwitcher />
             <button
               className="text-lime-600 hover:text-lime-700"
               onClick={() => dispatch(navbarDialogOpen())}

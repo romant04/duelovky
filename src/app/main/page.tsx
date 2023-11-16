@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="px-2">
+    <div className="mx-auto mt-5 flex w-full flex-col items-center px-2 md:w-4/5 md:items-start">
       <h1 className="text-4xl">Online hry</h1>
       <div className="mt-10 grid grid-cols-1 gap-4 px-2 sm:grid-cols-2 md:grid-cols-3">
         {GAME_DATA.map((game_data) => (

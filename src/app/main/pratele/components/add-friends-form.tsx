@@ -58,7 +58,7 @@ export const AddFriendsForm: FC<Props> = ({
   const mdUp = useMediaQuery("(min-width: 968px)");
 
   return (
-    <div className="w-full max-w-2xl overflow-auto rounded-sm bg-gray-600 text-white dark:bg-gray-750">
+    <div className="w-full max-w-2xl overflow-auto rounded-sm bg-gray-750 text-white">
       <div className="bg-lime-700 p-2">
         <h2 className="text-xl">Přidat přítele</h2>
       </div>
@@ -68,7 +68,7 @@ export const AddFriendsForm: FC<Props> = ({
           <input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-sm border-[1px] border-gray-900 p-2 font-semibold text-black dark:bg-gray-300 md:w-2/5"
+            className="w-full rounded-sm border-[1px] border-gray-900 bg-gray-300 p-2 font-semibold text-black md:w-2/5"
             type="text"
           />
           <div className="flex gap-4">
@@ -86,10 +86,8 @@ export const AddFriendsForm: FC<Props> = ({
         {searched && reducedFilteredUsers && (
           <p className="mt-2">
             Hledání pro:{" "}
-            <span className="text-lime-600 dark:font-light dark:text-lime-500">
-              {searched}
-            </span>{" "}
-            - {reducedFilteredUsers?.length}{" "}
+            <span className="font-light text-lime-500">{searched}</span> -{" "}
+            {reducedFilteredUsers?.length}{" "}
             {reducedFilteredUsers.length === 0
               ? "výsledků"
               : reducedFilteredUsers.length === 1
@@ -99,12 +97,12 @@ export const AddFriendsForm: FC<Props> = ({
               : "výsledků"}
           </p>
         )}
-        <div className="mt-8 flex flex-col gap-3">
+        <div className="mt-8 flex max-h-[300px] flex-col gap-3 overflow-auto">
           {loading && <LoadingSpinnerGreen />}
           {reducedFilteredUsers?.map((user) => (
             <div
-              className="flex items-center justify-between bg-gray-500 px-4 py-2 dark:bg-gray-600"
-              key={user.uid}
+              className="flex items-center justify-between bg-gray-600 px-4 py-2"
+              key={user.id}
             >
               <div className="flex items-center gap-2 md:gap-8">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500">
@@ -113,7 +111,7 @@ export const AddFriendsForm: FC<Props> = ({
                 <p>{user.username}</p>
               </div>
               <button
-                className="justify-self-end bg-lime-600 px-3 py-1 hover:bg-lime-700 dark:bg-lime-700 dark:hover:bg-lime-600"
+                className="justify-self-end bg-lime-700 px-3 py-1 hover:bg-lime-600"
                 onClick={() => sendFriendRequest(user)}
               >
                 {mdUp ? "Poslat žádost" : <FontAwesomeIcon icon={faUserPlus} />}

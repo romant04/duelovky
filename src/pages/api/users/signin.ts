@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "../../../../supabase";
 import * as bcrypt from "bcrypt";
 import { SupabaseUser } from "@/types/auth";
+import jwt from "jsonwebtoken";
 
 export default async function signIn(
   req: NextApiRequest,
@@ -29,8 +30,18 @@ export default async function signIn(
       data.password as string
     );
 
+    const jwtToken = jwt.sign(
+      { userId: data.id },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "2 days",
+      }
+    );
+
+    const sendData: SupabaseUser = { ...data, uid: jwtToken as string };
+
     if (passwordMatch) {
-      return res.status(200).json(data as SupabaseUser);
+      return res.status(200).json(sendData as SupabaseUser);
     }
 
     return res.status(400).json({ error: "Wrong password" });

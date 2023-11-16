@@ -9,24 +9,57 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      chat: {
+        Row: {
+          created_at: string | null;
+          id: number;
+          message: string;
+          receiver_id: number;
+          sender_id: number;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: number;
+          message: string;
+          receiver_id: number;
+          sender_id: number;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: number;
+          message?: string;
+          receiver_id?: number;
+          sender_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chat_receiver_id_fkey";
+            columns: ["receiver_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       friend_request: {
         Row: {
-          created_at: string;
-          id: number;
           message: string | null;
           receiver_id: number;
           sender_id: number;
         };
         Insert: {
-          created_at?: string;
-          id?: number;
           message?: string | null;
           receiver_id: number;
           sender_id: number;
         };
         Update: {
-          created_at?: string;
-          id?: number;
           message?: string | null;
           receiver_id?: number;
           sender_id?: number;
@@ -35,12 +68,14 @@ export interface Database {
           {
             foreignKeyName: "friend_request_receiver_id_fkey";
             columns: ["receiver_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "friend_request_sender_id_fkey";
             columns: ["sender_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
@@ -48,17 +83,14 @@ export interface Database {
       };
       friends: {
         Row: {
-          id: number;
           user1_id: number;
           user2_id: number;
         };
         Insert: {
-          id?: number;
           user1_id: number;
           user2_id: number;
         };
         Update: {
-          id?: number;
           user1_id?: number;
           user2_id?: number;
         };
@@ -66,12 +98,14 @@ export interface Database {
           {
             foreignKeyName: "friends_user1_id_fkey";
             columns: ["user1_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "friends_user2_id_fkey";
             columns: ["user2_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
@@ -79,28 +113,22 @@ export interface Database {
       };
       users: {
         Row: {
-          created_at: string;
-          email: string | null;
+          email: string;
           id: number;
-          password: string | null;
-          uid: string | null;
-          username: string | null;
+          password: string;
+          username: string;
         };
         Insert: {
-          created_at?: string;
-          email?: string | null;
+          email?: string;
           id?: number;
-          password?: string | null;
-          uid?: string | null;
-          username?: string | null;
+          password?: string;
+          username?: string;
         };
         Update: {
-          created_at?: string;
-          email?: string | null;
+          email?: string;
           id?: number;
-          password?: string | null;
-          uid?: string | null;
-          username?: string | null;
+          password?: string;
+          username?: string;
         };
         Relationships: [];
       };

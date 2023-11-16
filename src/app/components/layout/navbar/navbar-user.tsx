@@ -6,6 +6,8 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { clearUser } from "@/store/users/user-slice";
 import { useDispatch } from "react-redux";
 import { navbarDialogClose } from "@/store/navbar-dialog/navbar-dialog-slice";
+import { resetChat } from "@/store/chat/chat-slice";
+import { deleteCookie } from "cookies-next";
 
 interface Props {
   user: SupabaseUser | null;
@@ -15,9 +17,10 @@ export const NavbarUser: FC<Props> = ({ user }) => {
   const dispatch = useDispatch();
 
   const logout = () => {
-    localStorage.setItem("token", "");
+    deleteCookie("token");
     dispatch(navbarDialogClose());
     dispatch(clearUser());
+    dispatch(resetChat());
   };
 
   return (
