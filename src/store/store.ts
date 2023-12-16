@@ -3,6 +3,7 @@ import userReducer from "./users/user-slice";
 import navbarDialogReducer from "./navbar-dialog/navbar-dialog-slice";
 import chatLayoutReducer from "./chat/chat-slice";
 import mountReducer from "./mount/mount-slice";
+import horolezciReducer from "./horolezci/horolezci-slice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     navbarDialog: navbarDialogReducer,
     chatLayout: chatLayoutReducer,
     mount: mountReducer,
+    horolezci: horolezciReducer,
   },
 });
 
