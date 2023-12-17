@@ -14,3 +14,11 @@ interface SocketWithIO extends NetSocket {
 export interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO;
 }
+
+// ==== game types ======
+export interface HorolezciRoomGameData {
+  input: string;
+}
+export interface HorolezciGameData {
+  [room: string]: HorolezciRoomGameData;
+}

@@ -5,17 +5,7 @@
 body {
     min-height: 100vh;
     position: relative;
-
 }
 html {
     @apply bg-gray-800 text-white
-}
-
-.layout-container {
-    display: grid;
-    grid-template-areas:
-        "nav"
-        "content";
-    min-height: 100vh;
-    grid-template-rows: auto 1fr;
 }

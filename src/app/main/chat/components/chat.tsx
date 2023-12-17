@@ -1,11 +1,11 @@
 "use client";
 
 import { FC, FormEvent, useEffect, useState } from "react";
-import { ChatBubble } from "@/app/chat/components/chat-bubble";
+import { ChatBubble } from "./chat-bubble";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Message } from "@/types/chat";
-import { supabase } from "../../../../supabase";
+import { supabase } from "../../../../../supabase";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 import { toast } from "react-toastify";
 import { useMediaQuery } from "@/utils/useMediaQuery";
