@@ -3,6 +3,8 @@ import { NextApiRequest } from "next";
 import {
   HorolezciGameData,
   NextApiResponseWithSocket,
+  PrsiQ,
+  PrsiRoomData,
 } from "@/pages/api/types";
 import {
   abeceda,
@@ -12,12 +14,15 @@ import {
 } from "@/pages/data/horolezci";
 import { GuessData, HorolezciNewData } from "@/types/horolezci";
 import { CharacterPyramid } from "@/pages/utils/horolezci";
+import { createDeck, PlayersMatch } from "@/pages/utils/prsi";
+import { Card } from "@/app/assets/image-prep";
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
   let horolezciQ: Socket[] = [];
+  let prsiQ: PrsiQ[] = [];
 
   if (res.socket.server.io) {
     console.log("Server already started");
@@ -150,6 +155,66 @@ export default function handler(
         time = 30;
       }
     }, 1000);
+  });
+
+  io.of("prsi").on("connection", (socket) => {
+    const query = socket.handshake.query;
+    const prsiMMR = query.prsiMMR;
+
+    socket.on("q", () => {
+      prsiQ.push({ socket: socket, prsiMMR: Number(prsiMMR), margin: 20 });
+
+      console.log(prsiQ.length);
+      prsiQ.map((xd) => console.log(xd.socket.id));
+    });
+    socket.on("changeMargin", (seconds) => {
+      const me = prsiQ.find((x) => x.socket == socket) as PrsiQ;
+      me.margin += seconds * 2;
+
+      const matches = prsiQ.filter(
+        (x) =>
+          x.socket != socket &&
+          PlayersMatch(me.prsiMMR, me.margin, x.prsiMMR, x.margin)
+      );
+
+      if (matches.length > 0 && prsiQ.find((xd) => xd.socket == socket)) {
+        const enemy = matches[Math.floor(Math.random() * matches.length)];
+        prsiQ = prsiQ.filter((x) => x != enemy);
+        prsiQ = prsiQ.filter((x) => x.socket != socket);
+
+        const roomId = `${enemy.socket.id}${me.socket.id}`;
+        enemy.socket.join(roomId);
+        socket.join(roomId);
+        socket.to(roomId).emit("joined", roomId);
+        socket.emit("joined", roomId);
+        console.log("joined");
+        console.log(prsiQ.length);
+        prsiQ.map((xd) => console.log(xd.socket.id));
+      }
+    });
+  });
+
+  // Shared variables for specific rooms
+  const roomData: PrsiRoomData[] = [];
+
+  io.of("prsi-gameplay").on("connection", (socket) => {
+    const query = socket.handshake.query;
+    const roomName = query.roomName as string;
+    socket.join(roomName);
+
+    if (roomData.filter((x) => x.roomname === roomName).length === 0) {
+      roomData.push({ roomname: roomName, deck: createDeck() });
+    }
+
+    const deck = roomData.find((x) => x.roomname === roomName)?.deck as Card[];
+    const centerCard = deck[deck.length - 1];
+    socket.emit("deck", centerCard);
+
+    console.log(roomName);
+
+    socket.on("play", (card) => {
+      socket.to(roomName).emit("enemyPlayed", card);
+    });
   });
 
   console.log("Server started successfully");

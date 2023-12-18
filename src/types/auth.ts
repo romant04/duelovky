@@ -16,4 +16,7 @@ export interface SupabaseUser {
   email: string;
   password: string;
   uid: string;
+  horolezci_mmr: number;
+  prsi_mmr: number;
+  fotbal_mmr: number;
 }
