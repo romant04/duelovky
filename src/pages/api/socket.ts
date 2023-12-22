@@ -15,7 +15,7 @@ import {
 import { GuessData, HorolezciNewData } from "@/types/horolezci";
 import { CharacterPyramid } from "@/pages/utils/horolezci";
 import { createDeck, PlayersMatch } from "@/pages/utils/prsi";
-import { Card } from "@/app/assets/image-prep";
+import { Card, CARDS } from "@/app/assets/image-prep";
 
 export default function handler(
   req: NextApiRequest,
@@ -210,7 +210,16 @@ export default function handler(
     const centerCard = deck[deck.length - 1];
     socket.emit("deck", centerCard);
 
+    // TODO: try to move cards in server-side
+    const send = [...CARDS];
+
+    io.of("prsi-gameplay").to(roomName).emit("start-hand", send);
+
     console.log(roomName);
+
+    socket.on("start", () => {
+      socket.emit("start-hand", deck.slice(0, 4));
+    });
 
     socket.on("play", (card) => {
       socket.to(roomName).emit("enemyPlayed", card);
