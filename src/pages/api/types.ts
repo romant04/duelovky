@@ -2,7 +2,6 @@ import type { Server as HTTPServer } from "http";
 import type { NextApiResponse } from "next";
 import type { Socket as NetSocket } from "net";
 import type { Server as IOServer, Socket } from "socket.io";
-import { Card } from "@/app/assets/image-prep";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer | undefined;
@@ -31,6 +30,9 @@ export interface PrsiQ {
 }
 export interface PrsiRoomData {
   roomname: string;
-  deck: Card[];
-  centerCard?: Card;
+  deck: string[];
+  centerDrawn: string;
+  playedCards: string[];
+  players: string[];
+  round: string;
 }

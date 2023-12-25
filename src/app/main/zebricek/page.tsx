@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CARDS } from "@/app/assets/image-prep";
+import { CARDS } from "@/utils/image-prep";
 import backface from "@/app/assets/prsi/prsi_karty/backface.png";
 import { createDeck } from "@/pages/utils/prsi";
 import { useEffect } from "react";

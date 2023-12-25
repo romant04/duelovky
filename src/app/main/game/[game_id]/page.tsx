@@ -80,7 +80,7 @@ function Page({ params }: { params: { game_id: string } }) {
           <div className="flex flex-wrap gap-3 text-lg">
             {gameData?.tags.map((tag) => <GameTag key={tag} tag={tag} />)}
           </div>
-          <div className="mt-auto flex gap-4">
+          <div className="flex gap-4">
             <div className="flex gap-4">
               <button
                 className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"

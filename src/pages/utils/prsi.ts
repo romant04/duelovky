@@ -1,4 +1,4 @@
-import { Card, CARDS, COLORS } from "@/app/assets/image-prep";
+import { Card, CARDS, COLORS } from "@/utils/image-prep";
 import { shuffleArray } from "@/utils/general";
 
 export const PlayersMatch = (
@@ -25,17 +25,20 @@ export const createDeck = () => {
 export const isValidPlay = (
   midCard: Card,
   playedCard: Card,
-  activeColor?: COLORS
+  sedma: number,
+  eso: boolean,
+  activeColor: COLORS
 ) => {
-  if (midCard.value === "sedma" && playedCard.value !== "sedma") {
+  if (sedma > 0 && playedCard.value !== "sedma") {
     return false;
   }
-  if (midCard.value === "eso" && playedCard.value !== "eso") {
+  if (eso && playedCard.value !== "eso") {
     return false;
   }
 
-  const supposedColor = activeColor ? activeColor : midCard.color;
-  return (
-    midCard.value === playedCard.value || supposedColor === playedCard.color
-  );
+  if (playedCard.value === "svrsek") {
+    return true;
+  }
+
+  return midCard.value === playedCard.value || activeColor === playedCard.color;
 };

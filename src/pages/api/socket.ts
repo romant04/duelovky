@@ -15,7 +15,8 @@ import {
 import { GuessData, HorolezciNewData } from "@/types/horolezci";
 import { CharacterPyramid } from "@/pages/utils/horolezci";
 import { createDeck, PlayersMatch } from "@/pages/utils/prsi";
-import { Card, CARDS } from "@/app/assets/image-prep";
+import { encodeCard } from "@/utils/image-prep";
+import { shuffleArray } from "@/utils/general";
 
 export default function handler(
   req: NextApiRequest,
@@ -202,27 +203,78 @@ export default function handler(
     const roomName = query.roomName as string;
     socket.join(roomName);
 
-    if (roomData.filter((x) => x.roomname === roomName).length === 0) {
-      roomData.push({ roomname: roomName, deck: createDeck() });
+    const findOrCreateRoom = () => {
+      let room = roomData.find((x) => x.roomname === roomName);
+
+      if (!room) {
+        room = {
+          roomname: roomName,
+          deck: createDeck(),
+          centerDrawn: "",
+          playedCards: [],
+          round: socket.id,
+          players: [],
+        };
+        roomData.push(room);
+      }
+
+      room.players.push(socket.id);
+
+      return room;
+    };
+
+    const room = findOrCreateRoom();
+    const { deck, centerDrawn, playedCards, round, players } = room;
+
+    const swapRound = () => {
+      room.round = room.players.find((id) => id !== room.round) as string;
+      socket.emit("round", false);
+      socket.to(roomName).emit("round", true);
+    };
+
+    if (centerDrawn === "") {
+      const centerCard = deck.splice(deck.length - 1, 1)[0];
+      socket.emit("center", centerCard);
+      room.centerDrawn = centerCard;
+    } else {
+      socket.emit("center", centerDrawn);
     }
 
-    const deck = roomData.find((x) => x.roomname === roomName)?.deck as Card[];
-    const centerCard = deck[deck.length - 1];
-    socket.emit("deck", centerCard);
-
-    // TODO: try to move cards in server-side
-    const send = [...CARDS];
-
-    io.of("prsi-gameplay").to(roomName).emit("start-hand", send);
-
-    console.log(roomName);
-
-    socket.on("start", () => {
-      socket.emit("start-hand", deck.slice(0, 4));
-    });
+    socket.emit("start-hand", deck.splice(0, 4));
+    socket.emit("round", round === socket.id);
 
     socket.on("play", (card) => {
+      playedCards.push(encodeCard(card));
       socket.to(roomName).emit("enemyPlayed", card);
+
+      swapRound();
+    });
+
+    socket.on("draw", (drawAmount: number) => {
+      if (deck.length < drawAmount) {
+        const refill = shuffleArray(playedCards);
+        deck.push(...refill.slice(0, refill.length - 1));
+        playedCards.length = 1;
+      }
+
+      const drawnCards = deck.splice(0, drawAmount);
+      socket.emit("drawn", drawnCards);
+      socket.to(roomName).emit("enemyDrawn", drawAmount);
+
+      swapRound();
+    });
+
+    socket.on("swap-round", () => {
+      swapRound();
+      socket.to(roomName).emit("eso-passed");
+    });
+
+    socket.on("color-select", (color) => {
+      socket.to(roomName).emit("enemyColorSelect", color);
+    });
+
+    socket.on("win", () => {
+      socket.to(roomName).emit("lose");
     });
   });
 

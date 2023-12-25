@@ -34,11 +34,11 @@ import { StaticImageData } from "next/image";
 
 export interface Card {
   name: StaticImageData;
-  color: string;
+  color: COLORS;
   value: string;
 }
 
-export const CARDS: Card[] = [
+export const CARDS_DECODED: Card[] = [
   { name: c_kral, color: "c", value: "kral" },
   { name: e_kral, color: "e", value: "kral" },
   { name: z_kral, color: "z", value: "kral" },
@@ -69,16 +69,56 @@ export const CARDS: Card[] = [
   { name: k_osma, color: "k", value: "osma" },
   { name: c_sedma, color: "c", value: "sedma" },
   { name: e_sedma, color: "e", value: "sedma" },
-  { name: z_sedma, color: "z", value: "semda" },
+  { name: z_sedma, color: "z", value: "sedma" },
   { name: k_sedma, color: "k", value: "sedma" },
 ];
 
-export enum COLORS {
-  "c" = "c",
-  "e" = "e",
-  "k" = "k",
-  "z" = "z",
-}
+export const CARDS: string[] = [
+  "c_sedma",
+  "c_osma",
+  "c_devitka",
+  "c_desitka",
+  "c_spodek",
+  "c_svrsek",
+  "c_kral",
+  "c_eso",
+  "e_sedma",
+  "e_osma",
+  "e_devitka",
+  "e_desitka",
+  "e_spodek",
+  "e_svrsek",
+  "e_kral",
+  "e_eso",
+  "k_sedma",
+  "k_osma",
+  "k_devitka",
+  "k_desitka",
+  "k_spodek",
+  "k_svrsek",
+  "k_kral",
+  "k_eso",
+  "z_sedma",
+  "z_osma",
+  "z_devitka",
+  "z_desitka",
+  "z_spodek",
+  "z_svrsek",
+  "z_kral",
+  "z_eso",
+];
+
+export const decodeCard = (card: string): Card => {
+  const decoded = card.split("_");
+  return CARDS_DECODED.find(
+    (card) => card.color === decoded[0] && card.value === decoded[1]
+  ) as Card;
+};
+export const encodeCard = (card: Card): string => {
+  return `${card.color}_${card.value}`;
+};
+
+export type COLORS = "c" | "e" | "z" | "k";
 
 export enum VALUES {
   "sedma" = "sedma",
