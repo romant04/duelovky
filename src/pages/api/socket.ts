@@ -164,9 +164,6 @@ export default function handler(
 
     socket.on("q", () => {
       prsiQ.push({ socket: socket, prsiMMR: Number(prsiMMR), margin: 20 });
-
-      console.log(prsiQ.length);
-      prsiQ.map((xd) => console.log(xd.socket.id));
     });
     socket.on("changeMargin", (seconds) => {
       const me = prsiQ.find((x) => x.socket == socket) as PrsiQ;
@@ -188,9 +185,6 @@ export default function handler(
         socket.join(roomId);
         socket.to(roomId).emit("joined", roomId);
         socket.emit("joined", roomId);
-        console.log("joined");
-        console.log(prsiQ.length);
-        prsiQ.map((xd) => console.log(xd.socket.id));
       }
     });
   });

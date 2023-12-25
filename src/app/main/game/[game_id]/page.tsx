@@ -47,10 +47,6 @@ function Page({ params }: { params: { game_id: string } }) {
       },
     });
 
-    socket.on("connect", () => {
-      console.log(socket);
-    });
-
     socket.on("joined", (roomId) => {
       localStorage.setItem("room", roomId);
       router.push(`/gameplay/${gameData?.game_id}`);

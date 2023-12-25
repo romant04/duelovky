@@ -12,10 +12,15 @@ import "./prsi.css";
 import { RoundToken } from "@/app/gameplay/prsi/components/round-token";
 import { clsx } from "clsx";
 import { ColorSelectDialog } from "@/app/gameplay/prsi/components/color-selector-dialog/color-select-dialog";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 let socket: Socket;
 
 export default function Page() {
+  const router = useRouter();
+
   const [center, setCenter] = useState<Card>();
   const [hand, setHand] = useState<Card[]>();
   const [enemyCardsCount, setEnemyCardsCount] = useState<number>(4);
@@ -83,15 +88,10 @@ export default function Page() {
     // We just call it because we don't need anything else out of it
     await fetch("/api/socket");
 
-    console.log(room);
     socket = io("/prsi-gameplay", {
       query: {
         roomName: room,
       },
-    });
-
-    socket.on("connect", () => {
-      console.log(socket);
     });
 
     socket.on("enemyPlayed", (card: Card) => {
@@ -114,9 +114,7 @@ export default function Page() {
     });
 
     socket.on("start-hand", (hand: string[]) => {
-      console.log(hand);
       const decodedCards = hand.map((card) => decodeCard(card));
-      console.log(decodedCards);
       setHand(decodedCards);
     });
 
@@ -144,8 +142,28 @@ export default function Page() {
     });
 
     socket.on("lose", () => {
-      alert("You lost!");
+      void updatePoints(false);
     });
+  };
+
+  const updatePoints = async (win: boolean) => {
+    const token = getCookie("token");
+    const res = await fetch("/api/prsi/updatePoints", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: token, win: win }),
+    });
+
+    if (res.ok) {
+      router.push(`/gameover/${win ? "win" : "lose"}`);
+      return;
+    }
+
+    toast.error(
+      "Něco se pokazilo, omlouváme se. Tato hra nebude započítána do statistiky."
+    );
   };
 
   useEffect(() => {
@@ -157,7 +175,7 @@ export default function Page() {
   useEffect(() => {
     if (hand?.length === 0) {
       socket.emit("win");
-      alert("You won!");
+      void updatePoints(true);
     }
   }, [hand]);
 
