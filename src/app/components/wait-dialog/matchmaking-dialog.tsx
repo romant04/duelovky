@@ -4,9 +4,14 @@ import { clsx } from "clsx";
 interface Props {
   isOpen: boolean;
   stopMatchmaking: () => void;
+  gameTitle: string;
 }
 
-export const MatchmakingDialog: FC<Props> = ({ isOpen, stopMatchmaking }) => {
+export const MatchmakingDialog: FC<Props> = ({
+  isOpen,
+  stopMatchmaking,
+  gameTitle,
+}) => {
   const [dots, setDots] = useState(".");
   const [time, setTime] = useState(0);
 
@@ -43,7 +48,8 @@ export const MatchmakingDialog: FC<Props> = ({ isOpen, stopMatchmaking }) => {
         </div>
         <div>
           <h2 className="text-lg text-gray-200">
-            Hledání protivníka pro Horolezce{dots}
+            Hledání protivníka pro {gameTitle}
+            {dots}
           </h2>
           <span>{time}s</span>
         </div>

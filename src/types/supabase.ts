@@ -114,20 +114,29 @@ export interface Database {
       users: {
         Row: {
           email: string;
+          fotbal_mmr: number;
+          horolezci_mmr: number;
           id: number;
           password: string;
+          prsi_mmr: number;
           username: string;
         };
         Insert: {
           email?: string;
+          fotbal_mmr?: number;
+          horolezci_mmr?: number;
           id?: number;
           password?: string;
+          prsi_mmr?: number;
           username?: string;
         };
         Update: {
           email?: string;
+          fotbal_mmr?: number;
+          horolezci_mmr?: number;
           id?: number;
           password?: string;
+          prsi_mmr?: number;
           username?: string;
         };
         Relationships: [];

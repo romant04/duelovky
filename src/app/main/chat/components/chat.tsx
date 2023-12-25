@@ -127,7 +127,7 @@ export const Chat: FC = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-col gap-1 py-5">
+      <div className="flex max-h-[80vh] flex-col gap-1 overflow-auto px-5 py-5">
         {loading ? (
           <LoadingSpinnerGreen />
         ) : (

@@ -1,0 +1,24 @@
+.shakeAnim {
+    animation: shake 0.75s ease;
+}
+
+@keyframes shake {
+    0% {
+        transform: rotateZ(0deg);
+    }
+    20% {
+        transform: rotateZ(25deg);
+    }
+    40% {
+        transform: rotateZ(-25deg);
+    }
+    60% {
+        transform: rotateZ(25deg);
+    }
+    80% {
+        transform: rotateZ(-25deg);
+    }
+    100% {
+        transform: rotateZ(0);
+    }
+}

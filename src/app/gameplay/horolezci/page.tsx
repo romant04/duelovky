@@ -37,10 +37,6 @@ export default function Page() {
       },
     });
 
-    socket.on("connect", () => {
-      console.log(socket);
-    });
-
     socket.on("start-data", (startData: HorolezciRoomGameData) => {
       setEntry(convertToInput(startData.input));
     });

@@ -1,3 +1,3 @@
 export default function Page() {
-  return <h1>Žebříček</h1>;
+  return <div className="flex flex-wrap">Zebricek</div>;
 }

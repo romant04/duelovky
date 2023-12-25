@@ -11,7 +11,9 @@ export const NotSigned = (Component: FC<any>) =>
     const { user } = useSelector((state: RootState) => state.user);
     const { mounted } = useSelector((state: RootState) => state.mount);
 
+    if (!mounted) return null;
+
     if (!user && mounted) router.push("/prihlaseni");
 
-    return <Component {...props} />;
+    if (user) return <Component {...props} />;
   };

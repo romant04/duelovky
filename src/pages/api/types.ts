@@ -1,7 +1,7 @@
 import type { Server as HTTPServer } from "http";
 import type { NextApiResponse } from "next";
 import type { Socket as NetSocket } from "net";
-import type { Server as IOServer } from "socket.io";
+import type { Server as IOServer, Socket } from "socket.io";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer | undefined;
@@ -21,4 +21,18 @@ export interface HorolezciRoomGameData {
 }
 export interface HorolezciGameData {
   [room: string]: HorolezciRoomGameData;
+}
+
+export interface PrsiQ {
+  socket: Socket;
+  prsiMMR: number;
+  margin: number;
+}
+export interface PrsiRoomData {
+  roomname: string;
+  deck: string[];
+  centerDrawn: string;
+  playedCards: string[];
+  players: string[];
+  round: string;
 }
