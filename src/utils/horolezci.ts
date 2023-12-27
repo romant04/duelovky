@@ -1,4 +1,4 @@
-import { abeceda } from "@/pages/data/horolezci";
+import { abeceda } from "@/data/horolezci";
 import { HorolezciPyramidChars } from "@/types/horolezci";
 import { getRandomFromArray } from "@/utils/general";
 

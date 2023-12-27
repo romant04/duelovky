@@ -7,7 +7,7 @@ import backface from "../../assets/prsi/prsi_karty/backface.png";
 import { Card, COLORS, decodeCard } from "@/utils/image-prep";
 import Image from "next/image";
 import { PlayingCard } from "@/app/gameplay/prsi/components/playing-card";
-import { isValidPlay } from "@/pages/utils/prsi";
+import { isValidPlay } from "@/utils/prsi";
 import "./prsi.css";
 import { RoundToken } from "@/app/gameplay/prsi/components/round-token";
 import { clsx } from "clsx";

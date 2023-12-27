@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { clsx } from "clsx";
-import { SOLID_CHARACTERS } from "@/pages/data/horolezci";
+import { SOLID_CHARACTERS } from "@/data/horolezci";
 
 interface Props {
   character: string;
