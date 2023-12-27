@@ -42,6 +42,27 @@ export default function handler(
 
   io.of("horolezci").on("connection", (socket) => {
     console.log(`Connected with id: ${socket.id} on horolezci`);
+
+    // Wait for opponent
+    socket.on("codeQ", (code) => {
+      socket.join(code);
+    });
+    // Join room, emit to opponent
+    socket.on("codeQJoin", (code) => {
+      socket.join(code);
+      socket.to(code).emit("codeJoined", code);
+    });
+    // Join game together
+    socket.on("codeQStart", (code) => {
+      horolezciRoomData[code] = {
+        input:
+          horolezciZadani[Math.floor(Math.random() * horolezciZadani.length)],
+      };
+
+      socket.to(code).emit("joined", code);
+      socket.emit("joined", code);
+    });
+
     socket.on("q", () => {
       if (horolezciQ.length > 0) {
         const enemy = horolezciQ.pop();
@@ -71,6 +92,13 @@ export default function handler(
     const query = socket.handshake.query;
     const roomName = query.roomName as string;
     socket.join(roomName);
+
+    if (!horolezciRoomData[roomName]) {
+      socket.emit("error", "Room not found");
+      socket.disconnect();
+      return;
+    }
+
     io.of("horolezci-gameplay")
       .to(roomName)
       .emit("start-data", horolezciRoomData[roomName]);

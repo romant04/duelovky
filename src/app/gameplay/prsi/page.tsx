@@ -31,7 +31,7 @@ export default function Page() {
   const [activeSvrsek, setActiveSvrsek] = useState<Card | null>(null);
   const [activeColor, setAcitveColor] = useState<COLORS | null>(null);
 
-  const room = localStorage.getItem("room");
+  const [room, setRoom] = useState<string>("");
 
   const handlePassTurn = () => {
     if (!stop) {
@@ -167,10 +167,22 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const roomname = localStorage.getItem("room");
+      if (!roomname) {
+        toast.error("You were not in a room!");
+        router.push("/");
+        return;
+      }
+
+      setRoom(roomname);
+    }
+
     if (room) {
       void socketInitializer();
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room]);
 
   useEffect(() => {
     if (hand?.length === 0) {

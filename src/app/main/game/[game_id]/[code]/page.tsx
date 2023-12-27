@@ -15,8 +15,6 @@ function Page({ params }: { params: { game_id: string; code: string } }) {
   const router = useRouter();
   const gameData = GAME_DATA.find((x) => x.game_id === params.game_id);
 
-  console.log(params.game_id, params.code);
-
   const socketInitializer = async () => {
     // We just call it because we don't need anything else out of it
     await fetch("/api/socket");
