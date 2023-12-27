@@ -165,6 +165,22 @@ export default function handler(
     socket.on("q", () => {
       prsiQ.push({ socket: socket, prsiMMR: Number(prsiMMR), margin: 20 });
     });
+
+    // Wait for opponent
+    socket.on("codeQ", (code) => {
+      socket.join(code);
+    });
+    // Join room, emit to opponent
+    socket.on("codeQJoin", (code) => {
+      socket.join(code);
+      socket.to(code).emit("codeJoined", code);
+    });
+    // Join game together
+    socket.on("codeQStart", (code) => {
+      socket.to(code).emit("joined", code);
+      socket.emit("joined", code);
+    });
+
     socket.on("changeMargin", (seconds) => {
       const me = prsiQ.find((x) => x.socket == socket) as PrsiQ;
       me.margin += seconds * 2;

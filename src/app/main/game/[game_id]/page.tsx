@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { NotSigned } from "@/app/hoc/not-signed";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { v4 as uuid } from "uuid";
+import { FriendWaitDialog } from "@/app/components/wait-dialog/friend-wait-dialog";
 
 let socket: Socket;
 
@@ -18,6 +20,8 @@ function Page({ params }: { params: { game_id: string } }) {
   const { user } = useSelector((state: RootState) => state.user);
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCode, setIsOpenCode] = useState(false);
+  const [code, setCode] = useState("");
   const gameData = GAME_DATA.find((x) => x.game_id === params.game_id);
 
   const startMatchmaking = () => {
@@ -35,6 +39,13 @@ function Page({ params }: { params: { game_id: string } }) {
     clearInterval(interval.current);
   }, []);
 
+  const generateCode = () => {
+    const code = uuid();
+    setCode(code);
+    setIsOpenCode(true);
+    socket.emit("codeQ", code);
+  };
+
   const socketInitializer = async () => {
     // We just call it because we don't need anything else out of it
     await fetch("/api/socket");
@@ -45,6 +56,10 @@ function Page({ params }: { params: { game_id: string } }) {
         horolezciMMR: user?.horolezci_mmr,
         fotbalMMR: user?.fotbal_mmr,
       },
+    });
+
+    socket.on("codeJoined", (code) => {
+      socket.emit("codeQStart", code);
     });
 
     socket.on("joined", (roomId) => {
@@ -66,6 +81,7 @@ function Page({ params }: { params: { game_id: string } }) {
         isOpen={isOpen}
         stopMatchmaking={stopMatchmaking}
       />
+      <FriendWaitDialog isOpen={isOpenCode} code={code} />
       <div className="mx-auto mt-5 flex gap-8 md:w-4/5">
         <div className="h-80 min-h-[20em] w-80 min-w-[20em] bg-red-600">
           Placeholder for image
@@ -84,7 +100,10 @@ function Page({ params }: { params: { game_id: string } }) {
               >
                 Hrát
               </button>
-              <button className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500">
+              <button
+                className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500"
+                onClick={generateCode}
+              >
                 Vyzvat kamárada
               </button>
             </div>
