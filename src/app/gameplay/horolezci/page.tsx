@@ -14,14 +14,17 @@ import {
   selectChar,
   setHorolezciStart,
 } from "@/store/horolezci/horolezci-slice";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 let socket: Socket;
 
 export default function Page() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [input, setInput] = useState<HorolezciPyramidChars>();
   const [entry, setEntry] = useState<string[]>([]);
-  const room = localStorage.getItem("room");
+  const [room, setRoom] = useState<string>("");
   const [time, setTime] = useState<number>();
 
   const [myPoints, setMyPoints] = useState<number>(0);
@@ -35,6 +38,11 @@ export default function Page() {
       query: {
         roomName: room,
       },
+    });
+
+    socket.on("error", (error) => {
+      toast.error(error);
+      router.push("/");
     });
 
     socket.on("start-data", (startData: HorolezciRoomGameData) => {
@@ -85,9 +93,21 @@ export default function Page() {
   }, [myPoints, enemyPoints]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const roomname = localStorage.getItem("room");
+      if (!roomname) {
+        toast.error("You were not in a room!");
+        router.push("/");
+        return;
+      }
+
+      setRoom(roomname);
+    }
+
     if (room) {
       void socketInitializer();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
   return (
