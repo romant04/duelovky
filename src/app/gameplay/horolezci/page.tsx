@@ -4,7 +4,7 @@ import io, { Socket } from "socket.io-client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import mountain from "@/app/assets/mountain.png";
-import { convertToInput } from "@/pages/utils/horolezci";
+import { convertToInput } from "@/utils/horolezci";
 import { HorolezciRoomGameData } from "@/pages/api/types";
 import { SecretSentence } from "@/app/gameplay/horolezci/components/secret-sentence/secret-sentence";
 import { InputPyramid } from "@/app/gameplay/horolezci/components/input-pyramid/input-pyramid";

@@ -11,10 +11,10 @@ import {
   horolezciZadani,
   SOLID_CHARACTERS,
   vowels,
-} from "@/pages/data/horolezci";
+} from "@/data/horolezci";
 import { GuessData, HorolezciNewData } from "@/types/horolezci";
-import { CharacterPyramid } from "@/pages/utils/horolezci";
-import { createDeck, PlayersMatch } from "@/pages/utils/prsi";
+import { CharacterPyramid } from "@/utils/horolezci";
+import { createDeck, PlayersMatch } from "@/utils/prsi";
 import { encodeCard } from "@/utils/image-prep";
 import { shuffleArray } from "@/utils/general";
 
