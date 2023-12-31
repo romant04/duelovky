@@ -42,7 +42,7 @@ export const MatchmakingDialog: FC<Props> = ({
         isOpen ? "visible h-full w-full" : " invisible h-0 w-0"
       )}
     >
-      <div className="flex w-1/2 flex-col gap-4 rounded-md bg-gray-750 p-4">
+      <div className="mx-5 flex w-full flex-col gap-4 rounded-md bg-gray-750 p-4 md:w-1/2">
         <div>
           <h1 className="text-3xl">Matchmaking</h1>
         </div>
