@@ -82,8 +82,8 @@ function Page({ params }: { params: { game_id: string } }) {
         stopMatchmaking={stopMatchmaking}
       />
       <FriendWaitDialog isOpen={isOpenCode} code={code} />
-      <div className="mx-auto mt-5 flex gap-8 md:w-4/5">
-        <div className="h-80 min-h-[20em] w-80 min-w-[20em] bg-red-600">
+      <div className="mt-10 flex w-full flex-col gap-8 px-5 pb-5 md:mx-auto md:flex-row lg:w-4/5">
+        <div className="h-80 min-h-[20em] w-full min-w-[20em] bg-red-600 md:w-80">
           Placeholder for image
         </div>
         <div className="flex max-w-3xl flex-col gap-4">
@@ -92,21 +92,19 @@ function Page({ params }: { params: { game_id: string } }) {
           <div className="flex flex-wrap gap-3 text-lg">
             {gameData?.tags.map((tag) => <GameTag key={tag} tag={tag} />)}
           </div>
-          <div className="flex gap-4">
-            <div className="flex gap-4">
-              <button
-                className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"
-                onClick={startMatchmaking}
-              >
-                Hrát
-              </button>
-              <button
-                className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500"
-                onClick={generateCode}
-              >
-                Vyzvat kamárada
-              </button>
-            </div>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <button
+              className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"
+              onClick={startMatchmaking}
+            >
+              Hrát
+            </button>
+            <button
+              className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500"
+              onClick={generateCode}
+            >
+              Vyzvat kamárada
+            </button>
           </div>
         </div>
       </div>

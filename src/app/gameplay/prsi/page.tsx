@@ -213,7 +213,7 @@ export default function Page() {
         }}
         className="text-white"
       >
-        <div className="absolute -top-16 right-1/2 flex w-4/5 translate-x-1/2 justify-center overflow-visible pl-20 md:pl-0">
+        <div className="absolute -top-16 right-1/2 flex w-4/5 translate-x-1/2 justify-center overflow-x-auto pr-20 md:pr-0">
           {Array.from({ length: enemyCardsCount }).map((_, index) => (
             <Image
               key={index}
@@ -221,12 +221,12 @@ export default function Page() {
               alt="idk"
               height={220}
               width={110}
-              className="-mr-10 object-contain"
+              className="-mr-20 scale-50 object-contain md:-mr-10 md:scale-100"
             />
           ))}
         </div>
 
-        <div className="absolute bottom-0 right-1/2 flex w-[90%] translate-x-1/2 justify-center pl-20 md:pl-0">
+        <div className="absolute bottom-0 right-1/2 flex w-[90%] translate-x-1/2 justify-center overflow-x-auto">
           {hand?.map((card) => (
             <PlayingCard
               key={`${card.value}${card.color}`}
@@ -237,7 +237,7 @@ export default function Page() {
           ))}
         </div>
 
-        <div className="absolute bottom-1/2 right-10 translate-y-1/2">
+        <div className="absolute bottom-1/2 right-0 translate-y-1/2 md:right-10">
           <Image
             onClick={handleDraw}
             src={backface.src}
@@ -245,7 +245,7 @@ export default function Page() {
             height={220}
             width={110}
             className={clsx(
-              "object-contain",
+              "scale-50 object-contain md:scale-100",
               round ? "cursor-pointer" : "cursor-not-allowed"
             )}
           />
@@ -264,7 +264,13 @@ export default function Page() {
             />
           </div>
           {center && (
-            <Image src={center.name} alt="idk" height={220} width={110} />
+            <Image
+              src={center.name}
+              alt="idk"
+              height={220}
+              width={110}
+              className="-mr-10 scale-90 md:mr-0 md:scale-100"
+            />
           )}
         </div>
       </div>

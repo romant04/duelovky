@@ -32,7 +32,7 @@ export const PlayingCard: FC<Props> = ({ card, validifyPlay, round }) => {
       width={110}
       height={220}
       className={clsx(
-        "relative z-10 -mr-10 object-cover transition-all duration-300 hover:z-20 hover:scale-105",
+        "relative z-10 -mr-10 scale-75 object-cover transition-all duration-300 hover:z-20 hover:scale-[75%] md:-mr-10 md:scale-100 md:hover:scale-105",
         shakeAnim && "shakeAnim",
         round ? "cursor-pointer" : "cursor-not-allowed"
       )}

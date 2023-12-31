@@ -21,7 +21,7 @@ export const RoundToken: FC<Props> = ({ color }) => {
       : kule;
 
   return (
-    <div className="cursor-pointer rounded-full bg-gray-200 p-3">
+    <div className="scale-75 cursor-pointer rounded-full bg-gray-200 p-3 md:scale-100">
       <Image
         src={img.src}
         alt=""

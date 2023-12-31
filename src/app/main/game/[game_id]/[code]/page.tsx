@@ -45,14 +45,14 @@ function Page({ params }: { params: { game_id: string; code: string } }) {
 
   return (
     <div className="absolute flex h-full w-full items-center justify-center bg-black/80">
-      <div className="flex flex-col gap-8">
+      <div className="mx-5 flex flex-col gap-8">
         <h1 className="mb-4 text-center text-4xl font-bold">
           {gameData.title}
         </h1>
         <p className="text-lg">
           Přejete si připojit se do hry s tímto kódem ({params.code}) ?
         </p>
-        <div className="flex justify-between">
+        <div className="flex flex-col items-center justify-between md:flex-row">
           <button
             className="w-1/2 rounded-sm bg-lime-600 px-4 py-2 text-white hover:bg-lime-500"
             onClick={() => {
