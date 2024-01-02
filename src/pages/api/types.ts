@@ -28,6 +28,22 @@ export interface PrsiQ {
   prsiMMR: number;
   margin: number;
 }
+
+export interface FotbalQ {
+  socket: Socket;
+  fotbalMMR: number;
+  margin: number;
+}
+
+export interface QueueItem {
+  socket: Socket;
+  [key: string]: any;
+}
+
+export interface GlobalQueue {
+  [key: string]: QueueItem[];
+}
+
 export interface PrsiRoomData {
   roomname: string;
   deck: string[];

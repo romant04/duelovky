@@ -1,6 +1,8 @@
 import { Server, Socket } from "socket.io";
 import { NextApiRequest } from "next";
 import {
+  FotbalQ,
+  GlobalQueue,
   HorolezciGameData,
   NextApiResponseWithSocket,
   PrsiQ,
@@ -24,6 +26,7 @@ export default function handler(
 ) {
   let horolezciQ: Socket[] = [];
   let prsiQ: PrsiQ[] = [];
+  let fotbalQ: FotbalQ[] = [];
 
   if (res.socket.server.io) {
     console.log("Server already started");
@@ -37,6 +40,73 @@ export default function handler(
   });
 
   res.socket.server.io = io;
+
+  const namespaces = ["prsi", "fotbal"];
+
+  // Create a global object to store queues for each namespace
+  const globalQueues: GlobalQueue = {};
+
+  namespaces.forEach((namespace) => {
+    globalQueues[namespace] = [];
+
+    io.of(namespace).on("connection", (socket) => {
+      const query = socket.handshake.query;
+      const mmrKey = `${namespace}MMR`;
+
+      socket.on("q", () => {
+        globalQueues[namespace].push({
+          socket,
+          [mmrKey]: Number(query[mmrKey]),
+          margin: 20,
+        });
+      });
+
+      // Wait for opponent
+      socket.on("codeQ", (code) => {
+        socket.join(code);
+      });
+      // Join room, emit to opponent
+      socket.on("codeQJoin", (code) => {
+        socket.join(code);
+        socket.to(code).emit("codeJoined", code);
+      });
+      // Join game together
+      socket.on("codeQStart", (code) => {
+        socket.to(code).emit("joined", code);
+        socket.emit("joined", code);
+      });
+
+      socket.on("changeMargin", (seconds) => {
+        const queue = globalQueues[namespace];
+        const me = queue.find((x) => x.socket === socket);
+
+        if (me) {
+          me.margin += seconds * 2;
+
+          const matches = queue.filter(
+            (x) =>
+              x.socket !== socket &&
+              PlayersMatch(me[mmrKey], me.margin, x[mmrKey], x.margin)
+          );
+
+          if (matches.length > 0 && queue.find((xd) => xd.socket === socket)) {
+            const enemy = matches[Math.floor(Math.random() * matches.length)];
+            const enemyIndex = queue.indexOf(enemy);
+            const meIndex = queue.indexOf(me);
+
+            globalQueues[namespace].splice(enemyIndex, 1);
+            globalQueues[namespace].splice(meIndex, 1);
+
+            const roomId = `${enemy.socket.id}${me.socket.id}`;
+            enemy.socket.join(roomId);
+            socket.join(roomId);
+            socket.to(roomId).emit("joined", roomId);
+            socket.emit("joined", roomId);
+          }
+        }
+      });
+    });
+  });
 
   const horolezciRoomData: HorolezciGameData = {};
 
@@ -184,53 +254,6 @@ export default function handler(
         time = 30;
       }
     }, 1000);
-  });
-
-  io.of("prsi").on("connection", (socket) => {
-    const query = socket.handshake.query;
-    const prsiMMR = query.prsiMMR;
-
-    socket.on("q", () => {
-      prsiQ.push({ socket: socket, prsiMMR: Number(prsiMMR), margin: 20 });
-    });
-
-    // Wait for opponent
-    socket.on("codeQ", (code) => {
-      socket.join(code);
-    });
-    // Join room, emit to opponent
-    socket.on("codeQJoin", (code) => {
-      socket.join(code);
-      socket.to(code).emit("codeJoined", code);
-    });
-    // Join game together
-    socket.on("codeQStart", (code) => {
-      socket.to(code).emit("joined", code);
-      socket.emit("joined", code);
-    });
-
-    socket.on("changeMargin", (seconds) => {
-      const me = prsiQ.find((x) => x.socket == socket) as PrsiQ;
-      me.margin += seconds * 2;
-
-      const matches = prsiQ.filter(
-        (x) =>
-          x.socket != socket &&
-          PlayersMatch(me.prsiMMR, me.margin, x.prsiMMR, x.margin)
-      );
-
-      if (matches.length > 0 && prsiQ.find((xd) => xd.socket == socket)) {
-        const enemy = matches[Math.floor(Math.random() * matches.length)];
-        prsiQ = prsiQ.filter((x) => x != enemy);
-        prsiQ = prsiQ.filter((x) => x.socket != socket);
-
-        const roomId = `${enemy.socket.id}${me.socket.id}`;
-        enemy.socket.join(roomId);
-        socket.join(roomId);
-        socket.to(roomId).emit("joined", roomId);
-        socket.emit("joined", roomId);
-      }
-    });
   });
 
   // Shared variables for specific rooms
