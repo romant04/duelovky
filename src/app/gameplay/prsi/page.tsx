@@ -15,6 +15,7 @@ import { ColorSelectDialog } from "@/app/gameplay/prsi/components/color-selector
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { handleConnection } from "@/app/gameplay/utils/handleConnection";
 
 let socket: Socket;
 
@@ -167,20 +168,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const roomname = localStorage.getItem("room");
-      if (!roomname) {
-        toast.error("You were not in a room!");
-        router.push("/");
-        return;
-      }
-
-      setRoom(roomname);
-    }
-
-    if (room) {
-      void socketInitializer();
-    }
+    handleConnection(router, room, setRoom, socketInitializer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
