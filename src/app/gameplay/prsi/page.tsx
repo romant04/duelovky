@@ -189,6 +189,7 @@ export default function Page() {
       socket.emit("win");
       void updatePoints(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hand]);
 
   const tokenPosition = round ? "bottom-0" : "translate-y-[100%] bottom-[100%]";
@@ -226,7 +227,7 @@ export default function Page() {
           ))}
         </div>
 
-        <div className="absolute bottom-0 right-1/2 flex w-[90%] translate-x-1/2 justify-center overflow-x-auto">
+        <div className="absolute bottom-0 right-1/2 flex w-[90%] translate-x-1/2 justify-center overflow-x-auto overflow-y-hidden">
           {hand?.map((card) => (
             <PlayingCard
               key={`${card.value}${card.color}`}
