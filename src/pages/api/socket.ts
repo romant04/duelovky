@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { NextApiRequest } from "next";
 import {
   FotbalQ,
+  FotbalRoomData,
   GlobalQueue,
   HorolezciGameData,
   NextApiResponseWithSocket,
@@ -19,6 +20,7 @@ import { CharacterPyramid } from "@/utils/horolezci";
 import { createDeck, PlayersMatch } from "@/utils/prsi";
 import { encodeCard } from "@/utils/image-prep";
 import { shuffleArray } from "@/utils/general";
+import { getLetters } from "@/utils/fotbal";
 
 export default function handler(
   req: NextApiRequest,
@@ -337,6 +339,112 @@ export default function handler(
     socket.on("win", () => {
       socket.to(roomName).emit("lose");
     });
+  });
+
+  // Shared variables for specific rooms
+  const fotbalData: FotbalRoomData[] = [];
+
+  io.of("fotbal-gameplay").on("connection", (socket) => {
+    const query = socket.handshake.query;
+    const roomName = query.roomName as string;
+    const username = query.username as string;
+    socket.join(roomName);
+
+    const findOrCreateRoom = () => {
+      let room = fotbalData.find((x) => x.roomname === roomName);
+
+      if (!room) {
+        room = {
+          roomname: roomName,
+          letters: getLetters(),
+          players: [],
+        };
+        fotbalData.push(room);
+      }
+
+      room.players.push({
+        id: socket.id,
+        guessedWords: [],
+        username: username,
+        points: 0,
+      });
+
+      return room;
+    };
+
+    const room = findOrCreateRoom();
+
+    socket.emit("letters", room.letters);
+    if (room.players.find((x) => x.id !== socket.id)?.username) {
+      socket.emit(
+        "enemy",
+        room.players.find((x) => x.id !== socket.id)!.username
+      );
+    }
+    socket.to(roomName).emit("enemy", username);
+
+    socket.on("correct", (word: string) => {
+      if (
+        fotbalData
+          .find((x) => x.roomname === roomName)
+          ?.players.find((x) => x.id === socket.id)
+          ?.guessedWords.includes(word)
+      ) {
+        socket.emit("alreadyGuessed");
+        return;
+      }
+      fotbalData
+        .find((x) => x.roomname === roomName)!
+        .players.find((x) => x.id === socket.id)!.points += word.length;
+
+      socket.emit("points", word.length);
+      socket.to(roomName).emit("enemyPoints", word.length);
+      fotbalData
+        .find((x) => x.roomname === roomName)
+        ?.players.find((x) => x.id === socket.id)
+        ?.guessedWords.push(word);
+    });
+
+    if (room.players[0].username === username) {
+      let time = 120;
+      let round = 1;
+      setInterval(() => {
+        time--;
+
+        socket.emit("time", time);
+        socket.to(roomName).emit("time", time);
+
+        if (time === 0) {
+          if (round === 3) {
+            if (
+              fotbalData.find((x) => x.roomname === roomName)!.players[0]
+                .points ===
+              fotbalData.find((x) => x.roomname === roomName)!.players[1].points
+            ) {
+              socket.emit("draw");
+              socket.to(roomName).emit("draw");
+            } else if (
+              fotbalData.find((x) => x.roomname === roomName)!.players[0]
+                .points >
+              fotbalData.find((x) => x.roomname === roomName)!.players[1].points
+            ) {
+              socket.emit("win");
+              socket.to(roomName).emit("lose");
+            } else {
+              socket.emit("lose");
+              socket.to(roomName).emit("win");
+            }
+          } else {
+            fotbalData.find((x) => x.roomname === roomName)!.letters =
+              getLetters();
+            socket.emit("letters", room.letters);
+            socket.to(roomName).emit("letters", room.letters);
+            time = 120;
+            round++;
+          }
+        }
+      }, 1000);
+    }
   });
 
   console.log("Server started successfully");

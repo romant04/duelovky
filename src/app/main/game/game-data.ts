@@ -23,7 +23,7 @@ export const GAME_DATA: GameData[] = [
     game_id: "fotbal",
     description: "Hra se slovy, kdo sestaví více slov ?",
     long_description:
-      "Slovní fotbal je hra se slovy, jedná se o hru jeden na jednoho, kde se snažíte s náhodných písmen složit slova, za každé slovo získáváte body podle jeho veliksoti. Slova jsou kontrolovány podle speciálně upraveného slovníku. Tento slovník obsahuje pouze spisovná podstatná jména v prvním pádě, společně s vlastními jmény osob. Tím pádem žádná jiná slova nejsou braná jako platná. Kdo do dopršení časového limitu získá více bodů vyhrává",
+      "Slovní fotbal je hra se slovy, jedná se o hru jeden na jednoho, kde se snažíte s náhodných písmen složit slova, za každé slovo získáváte body podle jeho veliksoti. Slova jsou kontrolovány podle slovníku. Slova která v tomto slovníku nesjou, jsou neplatná. Kdo do dopršení časového limitu získá více bodů vyhrává",
     tags: [tags.vedomostni, tags.slovni],
   },
 ];

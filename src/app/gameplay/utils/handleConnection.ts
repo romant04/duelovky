@@ -6,7 +6,8 @@ export const handleConnection = (
   router: AppRouterInstance,
   room: string,
   setRoom: Dispatch<SetStateAction<string>>,
-  socketInitializer: () => Promise<void>
+  socketInitializer: (username?: string) => Promise<void>,
+  username?: string
 ) => {
   if (typeof window !== "undefined") {
     const roomname = localStorage.getItem("room");
@@ -22,6 +23,6 @@ export const handleConnection = (
   }
 
   if (room) {
-    void socketInitializer();
+    void socketInitializer(username);
   }
 };

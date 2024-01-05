@@ -52,3 +52,14 @@ export interface PrsiRoomData {
   players: string[];
   round: string;
 }
+
+export interface FotbalRoomData {
+  roomname: string;
+  letters: string[];
+  players: {
+    id: string;
+    username: string;
+    points: number;
+    guessedWords: string[];
+  }[];
+}
