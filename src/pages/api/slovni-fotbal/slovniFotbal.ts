@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { promises as fs } from "fs";
 
 export default async function slovniFotbal(
   req: NextApiRequest,
@@ -8,9 +7,13 @@ export default async function slovniFotbal(
   const { word } = req.query;
 
   try {
-    const file = await fs.readFile("./slovnik.txt", "utf8");
-    const data = file.split("\r\n").filter((slovo) => slovo == word).length > 0;
-    return res.status(200).json(data);
+    const vocab = await fetch(
+      "https://naasqncfyegievluczok.supabase.co/storage/v1/object/public/slovnik/slovnik.txt"
+    );
+    const data = await vocab.text();
+    const isIn = data.split("\r\n").filter((w) => w === word).length > 0;
+
+    return res.status(200).json(isIn);
   } catch (e: any) {
     return res.status(400).json({ error: e.message });
   }
