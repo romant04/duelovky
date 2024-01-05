@@ -16,6 +16,7 @@ import {
 } from "@/store/horolezci/horolezci-slice";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { handleConnection } from "@/app/gameplay/utils/handleConnection";
 
 let socket: Socket;
 
@@ -93,20 +94,7 @@ export default function Page() {
   }, [myPoints, enemyPoints]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const roomname = localStorage.getItem("room");
-      if (!roomname) {
-        toast.error("You were not in a room!");
-        router.push("/");
-        return;
-      }
-
-      setRoom(roomname);
-    }
-
-    if (room) {
-      void socketInitializer();
-    }
+    handleConnection(router, room, setRoom, socketInitializer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 

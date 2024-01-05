@@ -151,6 +151,7 @@ export default function Page() {
     setCookie("token", data.uid, { maxAge: 5 * 60 * 60 });
     dispatch(setUser(data));
     router.back();
+    router.back();
     toast.success("Byl si úspěšně zaregistrován");
     setLoading(false);
   };

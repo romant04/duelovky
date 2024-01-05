@@ -20,9 +20,10 @@ export const GAME_DATA: GameData[] = [
   },
   {
     title: "Slovní fotbal",
-    game_id: "slovnifotbal",
+    game_id: "fotbal",
     description: "Hra se slovy, kdo sestaví více slov ?",
-    long_description: "",
+    long_description:
+      "Slovní fotbal je hra se slovy, jedná se o hru jeden na jednoho, kde se snažíte s náhodných písmen složit slova, za každé slovo získáváte body podle jeho veliksoti. Slova jsou kontrolovány podle slovníku. Slova která v tomto slovníku nesjou, jsou neplatná. Kdo do dopršení časového limitu získá více bodů vyhrává",
     tags: [tags.vedomostni, tags.slovni],
   },
 ];
