@@ -116,6 +116,10 @@ export default function Page() {
 
     socket.on("time", (time: number) => {
       // convert seconds to minutes and seconds
+      if (time <= 0) {
+        setTime("0:00");
+        return;
+      }
       const minutes = Math.floor(time / 60);
       const seconds = time - minutes * 60;
       // add leading zeroes if necessary

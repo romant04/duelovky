@@ -39,6 +39,9 @@ export default function handler(
   const io = new Server(res.socket.server, {
     //@ts-ignore
     addTrailingSlash: false,
+    connectionStateRecovery: {
+      maxDisconnectionDuration: 60 * 1000,
+    },
   });
 
   res.socket.server.io = io;
@@ -61,6 +64,18 @@ export default function handler(
           [mmrKey]: Number(query[mmrKey]),
           margin: 20,
         });
+      });
+
+      socket.on("disconnect", () => {
+        globalQueues[namespace] = globalQueues[namespace].filter(
+          (q) => q.socket !== socket
+        );
+      });
+      // custom event that happens when user cancels queue but doesnt leave the page
+      socket.on("dq", () => {
+        globalQueues[namespace] = globalQueues[namespace].filter(
+          (q) => q.socket !== socket
+        );
       });
 
       // Wait for opponent
@@ -406,7 +421,7 @@ export default function handler(
     });
 
     if (room.players[0].username === username) {
-      let time = 120;
+      let time = 360;
       let round = 1;
       setInterval(() => {
         time--;
@@ -414,7 +429,8 @@ export default function handler(
         socket.emit("time", time);
         socket.to(roomName).emit("time", time);
 
-        if (time === 0) {
+        // each "round" starts after 2 mins
+        if (time % 120 === 0) {
           if (round === 3) {
             if (
               fotbalData.find((x) => x.roomname === roomName)!.players[0]
@@ -439,7 +455,6 @@ export default function handler(
               getLetters();
             socket.emit("letters", room.letters);
             socket.to(roomName).emit("letters", room.letters);
-            time = 120;
             round++;
           }
         }

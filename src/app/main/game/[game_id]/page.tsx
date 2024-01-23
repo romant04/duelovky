@@ -29,8 +29,15 @@ function Page({ params }: { params: { game_id: string } }) {
     socket.emit("q");
     interval.current = setInterval(() => {
       seconds.current += 10;
-      socket.emit("changeMargin", seconds.current);
-    }, 10000);
+      socket.emit(
+        "changeMargin",
+        seconds.current > 30
+          ? seconds.current * 2
+          : seconds.current > 120
+          ? seconds.current * 10
+          : seconds.current
+      );
+    }, 3000);
   };
 
   const stopMatchmaking = useCallback(() => {
@@ -81,7 +88,11 @@ function Page({ params }: { params: { game_id: string } }) {
         isOpen={isOpen}
         stopMatchmaking={stopMatchmaking}
       />
-      <FriendWaitDialog isOpen={isOpenCode} code={code} />
+      <FriendWaitDialog
+        isOpen={isOpenCode}
+        code={code}
+        setIsOpen={setIsOpenCode}
+      />
       <div className="mt-10 flex w-full flex-col gap-8 px-5 pb-5 md:mx-auto md:flex-row lg:w-4/5">
         <div className="h-80 min-h-[20em] w-full min-w-[20em] bg-red-600 md:w-80">
           Placeholder for image
