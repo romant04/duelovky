@@ -3,10 +3,11 @@ import { clsx } from "clsx";
 
 interface Props {
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   code: string;
 }
 
-export const FriendWaitDialog: FC<Props> = ({ isOpen, code }) => {
+export const FriendWaitDialog: FC<Props> = ({ isOpen, code, setIsOpen }) => {
   const [dots, setDots] = useState(".");
 
   useEffect(() => {
@@ -38,14 +39,22 @@ export const FriendWaitDialog: FC<Props> = ({ isOpen, code }) => {
             Odkaz pro kamaráda na připojení do hry
           </h2>
           <div className="bg-gray-500 p-2 font-semibold text-lime-400">{`${window.location.href}/${code}`}</div>
-          <button
-            className="mt-4 w-full bg-lime-600 py-2 hover:bg-lime-500"
-            onClick={() =>
-              navigator.clipboard.writeText(`${window.location.href}/${code}`)
-            }
-          >
-            Zkopírovat do schránky
-          </button>
+          <div className="mt-4 flex flex-col gap-2">
+            <button
+              className="w-full bg-lime-600 py-2 hover:bg-lime-500"
+              onClick={() =>
+                navigator.clipboard.writeText(`${window.location.href}/${code}`)
+              }
+            >
+              Zkopírovat do schránky
+            </button>
+            <button
+              className="w-full bg-red-600 py-2 hover:bg-red-500"
+              onClick={() => setIsOpen(false)}
+            >
+              Zrušit
+            </button>
+          </div>
         </div>
       </div>
     </div>
