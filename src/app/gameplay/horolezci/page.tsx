@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import mountain from "@/app/assets/horolezci/mountain.png";
 import { convertToInput } from "@/utils/horolezci";
-import { HorolezciRoomGameData } from "@/pages/api/types";
 import { SecretSentence } from "@/app/gameplay/horolezci/components/secret-sentence/secret-sentence";
 import { InputPyramid } from "@/app/gameplay/horolezci/components/input-pyramid/input-pyramid";
 import { HorolezciNewData, HorolezciPyramidChars } from "@/types/horolezci";
@@ -17,6 +16,9 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { handleConnection } from "@/app/gameplay/utils/handleConnection";
+import { getCookie } from "cookies-next";
+import { SupabaseUser } from "@/types/auth";
+import { HorolezciRoomData } from "@/pages/api/types";
 
 let socket: Socket;
 
@@ -27,17 +29,19 @@ export default function Page() {
   const [entry, setEntry] = useState<string[]>([]);
   const [room, setRoom] = useState<string>("");
   const [time, setTime] = useState<number>();
+  const [username, setUsername] = useState<string>("");
 
   const [myPoints, setMyPoints] = useState<number>(0);
   const [enemyPoints, setEnemyPoints] = useState<number>(0);
 
-  const socketInitializer = async () => {
+  const socketInitializer = async (username?: string) => {
     // We just call it because we don't need anything else out of it
     await fetch("/api/socket");
 
     socket = io("/horolezci-gameplay", {
       query: {
         roomName: room,
+        username: username,
       },
     });
 
@@ -46,7 +50,8 @@ export default function Page() {
       router.push("/");
     });
 
-    socket.on("start-data", (startData: HorolezciRoomGameData) => {
+    socket.on("start-data", (startData: HorolezciRoomData) => {
+      console.log(startData.input);
       setEntry(convertToInput(startData.input));
     });
     socket.on(
@@ -58,6 +63,10 @@ export default function Page() {
 
     socket.on("my-guess", (guess) => {
       socket.emit("enemy-guess", guess);
+    });
+    socket.on("enemy-char", (char) => {
+      console.log("Resending enemy char", char);
+      socket.emit("enemy-char", char);
     });
 
     socket.on("secret-sentence", (input: HorolezciPyramidChars) => {
@@ -94,9 +103,23 @@ export default function Page() {
   }, [myPoints, enemyPoints]);
 
   useEffect(() => {
-    handleConnection(router, room, setRoom, socketInitializer);
+    const connect = async () => {
+      const token = getCookie("token");
+      if (!token) return router.push("/");
+
+      const res = await fetch(`/api/users/tokenCheck?token=${token}`);
+      if (!res.ok) return router.push("/");
+
+      const data = (await res.json()) as SupabaseUser;
+      setUsername(data.username);
+
+      handleConnection(router, room, setRoom, socketInitializer, data.username);
+    };
+    void connect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
+
+  console.log(room);
 
   return (
     <>
@@ -105,7 +128,7 @@ export default function Page() {
           <h4>Your score:</h4>
           <span className="font-semibold">{myPoints}</span>
         </div>
-        <p className="text-4xl">{time}</p>
+        <p className="ml-6 text-4xl">{time}</p>
         <div className="flex flex-col items-center text-xl">
           <h4>Enemy score:</h4>
           <span className="font-semibold">{enemyPoints}</span>
@@ -123,7 +146,7 @@ export default function Page() {
           />
           <div className="absolute bottom-[0%] right-1/2 h-10 w-3 bg-red-600" />
         </div>
-        <div className="absolute bottom-0 z-[999999] h-64 w-full bg-gray-800 p-2 text-white">
+        <div className="absolute bottom-0 z-[999999] h-64 w-full overflow-auto bg-gray-800 p-2 text-white">
           <h2 className="mb-3 text-center text-3xl">Známý citát</h2>
           <SecretSentence secret={entry} />
         </div>

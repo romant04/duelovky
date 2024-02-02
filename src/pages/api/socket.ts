@@ -1,12 +1,10 @@
 import { Server, Socket } from "socket.io";
 import { NextApiRequest } from "next";
 import {
-  FotbalQ,
   FotbalRoomData,
   GlobalQueue,
-  HorolezciGameData,
+  HorolezciRoomData,
   NextApiResponseWithSocket,
-  PrsiQ,
   PrsiRoomData,
 } from "@/pages/api/types";
 import {
@@ -15,20 +13,19 @@ import {
   SOLID_CHARACTERS,
   vowels,
 } from "@/data/horolezci";
-import { GuessData, HorolezciNewData } from "@/types/horolezci";
+import { GuessData } from "@/types/horolezci";
 import { CharacterPyramid } from "@/utils/horolezci";
 import { createDeck, PlayersMatch } from "@/utils/prsi";
 import { encodeCard } from "@/utils/image-prep";
 import { shuffleArray } from "@/utils/general";
 import { getLetters } from "@/utils/fotbal";
+import { reviewChar } from "@/pages/api/horolezci/horolezci";
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
   let horolezciQ: Socket[] = [];
-  let prsiQ: PrsiQ[] = [];
-  let fotbalQ: FotbalQ[] = [];
 
   if (res.socket.server.io) {
     console.log("Server already started");
@@ -46,7 +43,7 @@ export default function handler(
 
   res.socket.server.io = io;
 
-  const namespaces = ["prsi", "fotbal"];
+  const namespaces = ["prsi", "fotbal", "horolezci"];
 
   // Create a global object to store queues for each namespace
   const globalQueues: GlobalQueue = {};
@@ -125,72 +122,41 @@ export default function handler(
     });
   });
 
-  const horolezciRoomData: HorolezciGameData = {};
-
-  io.of("horolezci").on("connection", (socket) => {
-    console.log(`Connected with id: ${socket.id} on horolezci`);
-
-    // Wait for opponent
-    socket.on("codeQ", (code) => {
-      socket.join(code);
-    });
-    // Join room, emit to opponent
-    socket.on("codeQJoin", (code) => {
-      socket.join(code);
-      socket.to(code).emit("codeJoined", code);
-    });
-    // Join game together
-    socket.on("codeQStart", (code) => {
-      horolezciRoomData[code] = {
-        input:
-          horolezciZadani[Math.floor(Math.random() * horolezciZadani.length)],
-      };
-
-      socket.to(code).emit("joined", code);
-      socket.emit("joined", code);
-    });
-
-    socket.on("q", () => {
-      if (horolezciQ.length > 0) {
-        const enemy = horolezciQ.pop();
-        const roomId = `${enemy?.id}${socket.id}`;
-
-        enemy?.join(roomId);
-        socket.join(roomId);
-
-        horolezciRoomData[roomId] = {
-          input:
-            horolezciZadani[Math.floor(Math.random() * horolezciZadani.length)],
-        };
-
-        socket.to(roomId).emit("joined", roomId);
-        socket.emit("joined", roomId);
-      } else {
-        horolezciQ.push(socket);
-      }
-    });
-
-    socket.on("dq", () => {
-      horolezciQ = horolezciQ.filter((item) => item != socket);
-    });
-  });
+  const horolezciRoomData: HorolezciRoomData[] = [];
 
   io.of("horolezci-gameplay").on("connection", (socket) => {
     const query = socket.handshake.query;
     const roomName = query.roomName as string;
+    const username = query.username as string;
     socket.join(roomName);
 
-    if (!horolezciRoomData[roomName]) {
-      socket.emit("error", "Room not found");
-      socket.disconnect();
-      return;
-    }
+    const findOrCreateRoom = () => {
+      let room = horolezciRoomData.find((x) => x.roomname === roomName);
 
-    io.of("horolezci-gameplay")
-      .to(roomName)
-      .emit("start-data", horolezciRoomData[roomName]);
+      if (!room) {
+        room = {
+          roomname: roomName,
+          input:
+            horolezciZadani[Math.floor(Math.random() * horolezciZadani.length)],
+          currentChars: null,
+          players: [],
+        };
+        horolezciRoomData.push(room);
+      }
 
-    const input = horolezciRoomData[roomName].input;
+      room.players.push({
+        id: socket.id,
+        username: username,
+      });
+
+      return room;
+    };
+
+    const room = findOrCreateRoom();
+
+    socket.emit("start-data", room);
+
+    const input = room.input;
     const correctChars = input
       .toLowerCase()
       .split("")
@@ -213,64 +179,61 @@ export default function handler(
       guessedChars
     );
 
-    const firstInput = pyramidGenerator.generateChars();
+    if (room?.currentChars) {
+      socket.emit("secret-sentence", room.currentChars);
+    } else {
+      room.currentChars = pyramidGenerator.generateChars();
+      socket.emit("secret-sentence", room.currentChars);
+    }
 
     let guess: GuessData | null = null;
+    let enemyGuess: GuessData | null = null;
     let selectedLevel: number;
-
-    socket.to(roomName).emit("secret-sentence", firstInput);
-    socket.emit("secret-sentence", firstInput);
 
     socket.on("char", (char: string) => {
       guess = { socketID: socket.id, guess: char };
+      socket
+        .to(roomName)
+        .emit("enemy-char", { socketID: socket.id, guess: char });
+    });
+    socket.on("enemy-char", (guessData: GuessData) => {
+      enemyGuess = guessData;
     });
     socket.on("level", (level) => {
       selectedLevel = level;
     });
 
-    socket.on("enemy-guess", (guess: string[]) => {
-      pyramidGenerator.guessedChars = [
-        ...pyramidGenerator.guessedChars,
-        ...guess,
-      ];
+    if (room.players[0]?.username === username) {
+      let time = 30;
+      setInterval(() => {
+        socket.emit("time", time);
+        socket.to(roomName).emit("time", time);
 
-      socket.emit("new-data", {
-        correctInput: input,
-        guessedChars: pyramidGenerator.guessedChars,
-      } as HorolezciNewData);
-      socket.to(roomName).emit("new-data", {
-        correctInput: input,
-        guessedChars: pyramidGenerator.guessedChars,
-      } as HorolezciNewData);
-    });
+        time--;
 
-    let time = 30;
-    setInterval(() => {
-      socket.emit("time", time);
-      socket.to(roomName).emit("time", time);
+        if (time === 0) {
+          reviewChar(
+            pyramidGenerator,
+            correctChars,
+            input,
+            guess,
+            enemyGuess,
+            roomName,
+            socket,
+            selectedLevel
+          );
 
-      time--;
+          guess = null;
+          enemyGuess = null;
 
-      if (time === 0) {
-        review_char(
-          pyramidGenerator,
-          correctChars,
-          input,
-          guess,
-          roomName,
-          socket,
-          selectedLevel
-        );
+          room.currentChars = pyramidGenerator.generateChars();
 
-        guess = null;
-
-        const newPyramidChars = pyramidGenerator.generateChars();
-
-        socket.to(roomName).emit("secret-sentence", newPyramidChars);
-        socket.emit("secret-sentence", newPyramidChars);
-        time = 30;
-      }
-    }, 1000);
+          socket.to(roomName).emit("secret-sentence", room.currentChars);
+          socket.emit("secret-sentence", room.currentChars);
+          time = 30;
+        }
+      }, 1000);
+    }
   });
 
   // Shared variables for specific rooms
@@ -465,41 +428,3 @@ export default function handler(
   console.log("Server started successfully");
   res.end();
 }
-
-const review_char = (
-  pyramidGenerator: CharacterPyramid,
-  correctChars: string[],
-  input: string,
-  guess: GuessData | null,
-  roomName: string,
-  socket: Socket,
-  levelSelected: number
-) => {
-  if (guess === null) {
-    socket.emit("wrong");
-    socket.to(roomName).emit("wrong-enemy");
-    return;
-  }
-
-  if (
-    correctChars.includes(guess.guess) &&
-    !pyramidGenerator.guessedChars.includes(guess.guess)
-  ) {
-    pyramidGenerator.guessedChars.push(guess.guess);
-    socket.to(roomName).emit("my-guess", pyramidGenerator.guessedChars);
-    socket.emit(
-      "correct",
-      correctChars.filter((char) => char === guess.guess).length * levelSelected
-    );
-    socket
-      .to(roomName)
-      .emit(
-        "correct-enemy",
-        correctChars.filter((char) => char === guess.guess).length *
-          levelSelected
-      );
-    return;
-  }
-
-  socket.emit("wrong", "wrong");
-};

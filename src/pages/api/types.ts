@@ -2,6 +2,7 @@ import type { Server as HTTPServer } from "http";
 import type { NextApiResponse } from "next";
 import type { Socket as NetSocket } from "net";
 import type { Server as IOServer, Socket } from "socket.io";
+import { HorolezciPyramidChars } from "@/types/horolezci";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer | undefined;
@@ -16,25 +17,6 @@ export interface NextApiResponseWithSocket extends NextApiResponse {
 }
 
 // ==== game types ======
-export interface HorolezciRoomGameData {
-  input: string;
-}
-export interface HorolezciGameData {
-  [room: string]: HorolezciRoomGameData;
-}
-
-export interface PrsiQ {
-  socket: Socket;
-  prsiMMR: number;
-  margin: number;
-}
-
-export interface FotbalQ {
-  socket: Socket;
-  fotbalMMR: number;
-  margin: number;
-}
-
 export interface QueueItem {
   socket: Socket;
   [key: string]: any;
@@ -42,6 +24,16 @@ export interface QueueItem {
 
 export interface GlobalQueue {
   [key: string]: QueueItem[];
+}
+
+export interface HorolezciRoomData {
+  roomname: string;
+  input: string;
+  currentChars: HorolezciPyramidChars | null;
+  players: {
+    id: string;
+    username: string;
+  }[];
 }
 
 export interface PrsiRoomData {
