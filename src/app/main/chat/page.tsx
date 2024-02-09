@@ -6,6 +6,7 @@ import { useMediaQuery } from "@/utils/useMediaQuery";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { NotSigned } from "@/app/hoc/not-signed";
+import "./scrollbar.css";
 
 function Page() {
   const { openedChat } = useSelector((state: RootState) => state.chatLayout);
@@ -14,12 +15,14 @@ function Page() {
   return (
     <>
       {mdUp ? (
-        <div className="flex w-full">
+        <div className="flex w-full bg-gray-900">
           <FriendList />
           <Chat />
         </div>
       ) : (
-        <div>{openedChat ? <Chat /> : <FriendList />}</div>
+        <div className="bg-gray-900">
+          {openedChat ? <Chat /> : <FriendList />}
+        </div>
       )}
     </>
   );

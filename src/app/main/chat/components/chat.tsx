@@ -110,40 +110,54 @@ export const Chat: FC = () => {
   const mdUp = useMediaQuery("(min-width: 968px)");
 
   return (
-    <div className="flex h-full w-full flex-col bg-gray-900 p-4 md:w-3/4">
-      {!mdUp && (
-        <div className="flex items-center gap-5">
-          <FontAwesomeIcon
-            onClick={closeChat}
-            className="cursor-pointer"
-            size="xl"
-            icon={faArrowLeft}
-          />
-          <div className="flex items-center gap-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500">
-              {openedChat?.friend.username.charAt(0).toUpperCase()}
-            </div>
-            <p>{openedChat?.friend.username}</p>
-          </div>
-        </div>
-      )}
-      <div className="flex max-h-[80vh] flex-col gap-1 overflow-auto px-5 py-5">
-        {loading ? (
-          <LoadingSpinnerGreen />
-        ) : (
-          openedChat &&
-          messages?.map((msg, i) => (
-            <ChatBubble
-              sender={
-                msg.sender_id === user?.id ? "Já" : openedChat.friend.username
-              }
-              message={msg.message}
-              key={i}
+    <div className="flex h-full w-full flex-col justify-between p-4 md:w-3/4">
+      <div>
+        {!mdUp && (
+          <div className="flex max-h-[10vh] items-center gap-5">
+            <FontAwesomeIcon
+              onClick={closeChat}
+              className="cursor-pointer"
+              size="xl"
+              icon={faArrowLeft}
             />
-          ))
+            <div className="flex items-center gap-5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500">
+                {openedChat?.friend.username.charAt(0).toUpperCase()}
+              </div>
+              <p>{openedChat?.friend.username}</p>
+            </div>
+          </div>
         )}
+        <div className="scrollbar flex max-h-[70vh] flex-col gap-1 overflow-auto px-5 py-5 md:max-h-[80vh]">
+          {loading ? (
+            <LoadingSpinnerGreen />
+          ) : (
+            openedChat &&
+            messages
+              ?.sort(
+                (a, b) =>
+                  new Date(a.created_at).getTime() -
+                  new Date(b.created_at).getTime()
+              )
+              .map((msg, i) => (
+                <ChatBubble
+                  sender={
+                    msg.sender_id === user?.id
+                      ? "Já"
+                      : openedChat.friend.username
+                  }
+                  message={msg.message}
+                  key={i}
+                />
+              ))
+          )}
+        </div>
       </div>
-      <form className="mt-auto flex w-full gap-1" onSubmit={sendMessage}>
+
+      <form
+        className="mt-auto flex max-h-[10vh] w-full gap-1 pt-2"
+        onSubmit={sendMessage}
+      >
         <input
           value={currentMessage}
           onChange={(e) => setCurrentMessage(e.target.value)}
