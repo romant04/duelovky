@@ -20,6 +20,7 @@ import { getCookie } from "cookies-next";
 import { SupabaseUser } from "@/types/auth";
 import { HorolezciRoomData } from "@/pages/api/types";
 import { Horolezec } from "@/app/gameplay/horolezci/components/horolezec";
+import { GameLoader } from "@/app/gameplay/components/GameLoader";
 
 let socket: Socket;
 
@@ -34,9 +35,15 @@ export default function Page() {
 
   const [myPoints, setMyPoints] = useState<number>(0);
   const [enemyPoints, setEnemyPoints] = useState<number>(0);
+  const [pointsChange, setPointsChange] = useState<boolean>(false); // Just for triggering useEffect when points change to same value
 
   const [paused, setPaused] = useState<boolean>(false);
   const [down, setDown] = useState<boolean>(false);
+
+  const start = () => {
+    socket.emit("start");
+    setPaused(false);
+  };
 
   const socketInitializer = async (username?: string) => {
     // We just call it because we don't need anything else out of it
@@ -55,7 +62,6 @@ export default function Page() {
     });
 
     socket.on("start-data", (startData: HorolezciRoomData) => {
-      console.log(startData.input);
       setEntry(convertToInput(startData.input));
     });
     socket.on(
@@ -85,11 +91,13 @@ export default function Page() {
 
     socket.on("wrong", () => {
       setMyPoints((prev) => (prev - 8 < 0 ? 0 : prev - 8));
+      setPointsChange((prev) => !prev);
       socket.emit("stop");
       setDown(true);
     });
     socket.on("correct", (value: number) => {
       setMyPoints((prev) => prev + value);
+      setPointsChange((prev) => !prev);
       socket.emit("stop");
       setDown(false);
     });
@@ -132,18 +140,17 @@ export default function Page() {
 
   useEffect(() => {
     setPaused(true);
-    console.log(myPoints);
     const timeout = setTimeout(() => {
       socket.emit("start");
       setPaused(false);
       clearTimeout(timeout);
     }, 2500);
-  }, [myPoints]);
-
-  console.log(room);
+  }, [myPoints, pointsChange]);
 
   return (
     <>
+      <GameLoader start={start} />
+
       <div className="absolute right-1/2 top-10 z-[999999] flex w-full translate-x-1/2 justify-between px-20 text-white">
         <div className="flex flex-col items-center text-xl">
           <h4>Your score:</h4>

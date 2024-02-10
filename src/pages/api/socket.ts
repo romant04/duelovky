@@ -190,8 +190,8 @@ export default function handler(
     let enemyGuess: GuessData | null = null;
     let selectedLevel: number;
 
-    let stopped = false;
-    let stoppedEnemy = false;
+    let stopped = true;
+    let stoppedEnemy = true;
 
     socket.on("char", (char: string) => {
       guess = { socketID: socket.id, guess: char };
