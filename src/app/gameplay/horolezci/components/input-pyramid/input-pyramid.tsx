@@ -11,7 +11,7 @@ interface Props {
 
 export const InputPyramid: FC<Props> = ({ chars, socket }) => {
   return (
-    <div className="absolute z-[99999] flex h-full w-full items-center justify-center bg-black/50 pb-64">
+    <div className="absolute z-[99999] flex h-full w-full items-center justify-center pb-64">
       <div className="flex flex-col items-center">
         <div className={styles.hexRow}>
           <InputField char={chars?.level1} level={4} socket={socket} />

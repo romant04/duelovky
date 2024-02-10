@@ -190,6 +190,9 @@ export default function handler(
     let enemyGuess: GuessData | null = null;
     let selectedLevel: number;
 
+    let stopped = false;
+    let stoppedEnemy = false;
+
     socket.on("char", (char: string) => {
       guess = { socketID: socket.id, guess: char };
       socket
@@ -203,13 +206,30 @@ export default function handler(
       selectedLevel = level;
     });
 
+    socket.on("stop", () => {
+      stopped = true;
+      socket.to(roomName).emit("stop-enemy");
+    });
+    socket.on("stop-enemy", () => {
+      stoppedEnemy = true;
+    });
+    socket.on("start", () => {
+      stopped = false;
+      stoppedEnemy = false;
+    });
+
     if (room.players[0]?.username === username) {
       let time = 30;
       setInterval(() => {
-        socket.emit("time", time);
-        socket.to(roomName).emit("time", time);
+        if (stopped && stoppedEnemy) {
+          time = 30;
+          return;
+        }
 
         time--;
+
+        socket.emit("time", time);
+        socket.to(roomName).emit("time", time);
 
         if (time === 0) {
           reviewChar(
