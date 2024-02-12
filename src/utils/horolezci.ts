@@ -32,6 +32,7 @@ export class CharacterPyramid {
 
   private readonly RANDOM_SELECTOR = 21;
 
+  // TODO: Stop reacting to old chars - need to rewrite the private setting
   private assignPrivateChars = () => {
     this._incorrectChars = [
       ...this.incorrectChars.filter((el) => !this.guessedChars.includes(el)),

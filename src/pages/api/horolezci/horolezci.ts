@@ -1,6 +1,7 @@
 import { CharacterPyramid } from "@/utils/horolezci";
 import { GuessData, HorolezciNewData } from "@/types/horolezci";
 import { Socket } from "socket.io";
+import { abeceda } from "@/data/horolezci";
 
 export const reviewChar = (
   pyramidGenerator: CharacterPyramid,
@@ -13,14 +14,24 @@ export const reviewChar = (
   levelSelected: number
 ) => {
   const sendNewData = () => {
-    socket.emit("new-data", {
-      correctInput: input,
-      guessedChars: pyramidGenerator.guessedChars,
-    } as HorolezciNewData);
-    socket.to(roomName).emit("new-data", {
-      correctInput: input,
-      guessedChars: pyramidGenerator.guessedChars,
-    } as HorolezciNewData);
+    const charsLeft = input
+      .toLowerCase()
+      .split("")
+      .filter((x) => abeceda.includes(x))
+      .filter((x) => !pyramidGenerator.guessedChars.includes(x)).length;
+
+    if (charsLeft !== 0) {
+      socket.emit("new-data", {
+        correctInput: input,
+        guessedChars: pyramidGenerator.guessedChars,
+      } as HorolezciNewData);
+      socket.to(roomName).emit("new-data", {
+        correctInput: input,
+        guessedChars: pyramidGenerator.guessedChars,
+      } as HorolezciNewData);
+    }
+
+    return charsLeft == 0;
   };
 
   if (guess === null) {
@@ -64,9 +75,7 @@ export const reviewChar = (
             levelSelected
         );
 
-      sendNewData();
-
-      return;
+      return sendNewData();
     }
   } else if (
     guess &&
@@ -90,9 +99,7 @@ export const reviewChar = (
             levelSelected
         );
 
-      sendNewData();
-
-      return;
+      return sendNewData();
     }
   }
 
@@ -123,5 +130,5 @@ export const reviewChar = (
     socket.to(roomName).emit("wrong");
   }
 
-  sendNewData();
+  return sendNewData();
 };

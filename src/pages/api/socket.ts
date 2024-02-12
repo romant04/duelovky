@@ -13,7 +13,7 @@ import {
   SOLID_CHARACTERS,
   vowels,
 } from "@/data/horolezci";
-import { GuessData } from "@/types/horolezci";
+import { GuessData, HorolezciNewData } from "@/types/horolezci";
 import { CharacterPyramid } from "@/utils/horolezci";
 import { createDeck, PlayersMatch } from "@/utils/prsi";
 import { encodeCard } from "@/utils/image-prep";
@@ -128,19 +128,21 @@ export default function handler(
     const query = socket.handshake.query;
     const roomName = query.roomName as string;
     const username = query.username as string;
+    let zadani: string[] = horolezciZadani;
     socket.join(roomName);
 
     const findOrCreateRoom = () => {
       let room = horolezciRoomData.find((x) => x.roomname === roomName);
 
       if (!room) {
+        const random = Math.floor(Math.random() * zadani.length);
         room = {
           roomname: roomName,
-          input:
-            horolezciZadani[Math.floor(Math.random() * horolezciZadani.length)],
+          input: zadani[random],
           currentChars: null,
           players: [],
         };
+        zadani.splice(random, 1);
         horolezciRoomData.push(room);
       }
 
@@ -156,15 +158,14 @@ export default function handler(
 
     socket.emit("start-data", room);
 
-    const input = room.input;
-    const correctChars = input
+    const correctChars = room.input
       .toLowerCase()
       .split("")
       .filter((char) => !SOLID_CHARACTERS.includes(char));
 
     let guessedChars: string[] = [];
     const incorrectChars = abeceda.filter(
-      (char) => !input.includes(char) && !SOLID_CHARACTERS.includes(char)
+      (char) => !room.input.includes(char) && !SOLID_CHARACTERS.includes(char)
     );
 
     const correctVowels = correctChars.filter((char) => vowels.includes(char));
@@ -232,16 +233,48 @@ export default function handler(
         socket.to(roomName).emit("time", time);
 
         if (time === 0) {
-          reviewChar(
+          const OutOfChars = reviewChar(
             pyramidGenerator,
             correctChars,
-            input,
+            room.input,
             guess,
             enemyGuess,
             roomName,
             socket,
             selectedLevel
           );
+
+          if (OutOfChars) {
+            const random = Math.floor(Math.random() * zadani.length);
+            room.input = zadani[random];
+            zadani.splice(random, 1);
+
+            const incorrectChars = abeceda.filter(
+              (char) =>
+                !room.input.includes(char) && !SOLID_CHARACTERS.includes(char)
+            );
+
+            const correctVowels = correctChars.filter((char) =>
+              vowels.includes(char)
+            );
+            const correctNonVowels = correctChars.filter(
+              (char) => !vowels.includes(char)
+            );
+
+            pyramidGenerator.guessedChars = [];
+            pyramidGenerator.incorrectChars = incorrectChars;
+            pyramidGenerator.correctVowels = correctVowels;
+            pyramidGenerator.correctNonVowels = correctNonVowels;
+
+            socket.emit("new-data", {
+              correctInput: room.input,
+              guessedChars: pyramidGenerator.guessedChars,
+            } as HorolezciNewData);
+            socket.to(roomName).emit("new-data", {
+              correctInput: room.input,
+              guessedChars: pyramidGenerator.guessedChars,
+            } as HorolezciNewData);
+          }
 
           guess = null;
           enemyGuess = null;
