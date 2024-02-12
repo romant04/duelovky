@@ -18,15 +18,15 @@ const LOW_QUALITY_LETTERS = [
 const USEFUL_VOWELS = ["a", "e", "i", "o", "u"];
 
 export const getLetters = () => {
-  const popableAbeceda = [
+  let popableAbeceda = [
     ...abeceda
       .filter((l) => !vowels.includes(l))
       .filter((l) => l !== "q" && l !== "w" && l !== "x"),
   ];
-  const popableVowels = [...vowels];
+  let popableVowels = [...vowels];
 
   // random from 10 to 15
-  const count = Math.floor(Math.random() * 6) + 10;
+  const count = Math.floor(Math.random() * 8) + 12;
   // random from 1 to 3
   const vowelsCount = Math.floor(Math.random() * 2) + 1;
   const usefulVowels = Math.floor(Math.random() * 4) + 2;
@@ -46,17 +46,18 @@ export const getLetters = () => {
       : popableAbeceda[Math.floor(Math.random() * popableAbeceda.length)];
 
     letters.push(letter);
-    if (
-      isVowel &&
-      (letters.filter((l) => l === letter).length === 2 ||
-        LOW_QUALITY_LETTERS.includes(letter))
-    ) {
+    if (LOW_QUALITY_LETTERS.includes(letter)) {
+      popableAbeceda = popableAbeceda.filter(
+        (l) => !LOW_QUALITY_LETTERS.includes(l)
+      );
+      popableVowels = popableVowels.filter(
+        (l) => !LOW_QUALITY_LETTERS.includes(l)
+      );
+    }
+
+    if (isVowel && letters.filter((l) => l === letter).length === 2) {
       popableVowels.splice(popableVowels.indexOf(letter), 1);
-    } else if (
-      !isVowel &&
-      (letters.filter((l) => l === letter).length === 2 ||
-        LOW_QUALITY_LETTERS.includes(letter))
-    ) {
+    } else if (!isVowel && letters.filter((l) => l === letter).length === 2) {
       popableAbeceda.splice(popableAbeceda.indexOf(letter), 1);
     }
   }
