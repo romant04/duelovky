@@ -32,8 +32,8 @@ export class CharacterPyramid {
 
   private readonly RANDOM_SELECTOR = 21;
 
-  // TODO: Stop reacting to old chars - need to rewrite the private setting
-  private assignPrivateChars = () => {
+  // Private variables are used to keep track of the characters that are not guessed yet (to not include them twice in the same round in the pyramid)
+  public assignPrivateChars = () => {
     this._incorrectChars = [
       ...this.incorrectChars.filter((el) => !this.guessedChars.includes(el)),
     ];

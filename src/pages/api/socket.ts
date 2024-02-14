@@ -158,18 +158,18 @@ export default function handler(
 
     socket.emit("start-data", room);
 
-    const correctChars = room.input
+    let correctChars = room.input
       .toLowerCase()
       .split("")
       .filter((char) => !SOLID_CHARACTERS.includes(char));
 
     let guessedChars: string[] = [];
-    const incorrectChars = abeceda.filter(
+    let incorrectChars = abeceda.filter(
       (char) => !room.input.includes(char) && !SOLID_CHARACTERS.includes(char)
     );
 
-    const correctVowels = correctChars.filter((char) => vowels.includes(char));
-    const correctNonVowels = correctChars.filter(
+    let correctVowels = correctChars.filter((char) => vowels.includes(char));
+    let correctNonVowels = correctChars.filter(
       (char) => !vowels.includes(char)
     );
 
@@ -249,22 +249,28 @@ export default function handler(
             room.input = zadani[random];
             zadani.splice(random, 1);
 
-            const incorrectChars = abeceda.filter(
+            correctChars = room.input
+              .toLowerCase()
+              .split("")
+              .filter((char) => !SOLID_CHARACTERS.includes(char));
+
+            incorrectChars = abeceda.filter(
               (char) =>
                 !room.input.includes(char) && !SOLID_CHARACTERS.includes(char)
             );
 
-            const correctVowels = correctChars.filter((char) =>
+            correctVowels = correctChars.filter((char) =>
               vowels.includes(char)
             );
-            const correctNonVowels = correctChars.filter(
+            correctNonVowels = correctChars.filter(
               (char) => !vowels.includes(char)
             );
 
             pyramidGenerator.guessedChars = [];
-            pyramidGenerator.incorrectChars = incorrectChars;
-            pyramidGenerator.correctVowels = correctVowels;
-            pyramidGenerator.correctNonVowels = correctNonVowels;
+            pyramidGenerator.incorrectChars = [...new Set(incorrectChars)];
+            pyramidGenerator.correctVowels = [...new Set(correctVowels)];
+            pyramidGenerator.correctNonVowels = [...new Set(correctNonVowels)];
+            pyramidGenerator.assignPrivateChars();
 
             socket.emit("new-data", {
               correctInput: room.input,
