@@ -12,8 +12,9 @@ https://duelovky.up.railway.app/
 #### Naklonování repozitář
 ```bash
 git clone https://github.com/romant04/duelovky.git
--- vytvořit .env soubor a vložit env variables
 ```
+#### - Vytvořit .env soubor a vložit env variables
+&nbsp;
 
 #### Instalace balíčků
 ```bash

@@ -1,4 +1,4 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { NextApiRequest } from "next";
 import {
   FotbalRoomData,
@@ -25,8 +25,6 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
-  let horolezciQ: Socket[] = [];
-
   if (res.socket.server.io) {
     console.log("Server already started");
     res.end();
