@@ -3,9 +3,8 @@
 import io, { Socket } from "socket.io-client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import mountain from "@/app/assets/mountain.png";
+import mountain from "@/app/assets/horolezci/mountain.png";
 import { convertToInput } from "@/utils/horolezci";
-import { HorolezciRoomGameData } from "@/pages/api/types";
 import { SecretSentence } from "@/app/gameplay/horolezci/components/secret-sentence/secret-sentence";
 import { InputPyramid } from "@/app/gameplay/horolezci/components/input-pyramid/input-pyramid";
 import { HorolezciNewData, HorolezciPyramidChars } from "@/types/horolezci";
@@ -17,6 +16,11 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { handleConnection } from "@/app/gameplay/utils/handleConnection";
+import { getCookie } from "cookies-next";
+import { SupabaseUser } from "@/types/auth";
+import { HorolezciRoomData } from "@/pages/api/types";
+import { Horolezec } from "@/app/gameplay/horolezci/components/horolezec";
+import { GameLoader } from "@/app/gameplay/components/GameLoader";
 
 let socket: Socket;
 
@@ -27,17 +31,28 @@ export default function Page() {
   const [entry, setEntry] = useState<string[]>([]);
   const [room, setRoom] = useState<string>("");
   const [time, setTime] = useState<number>();
+  const [username, setUsername] = useState<string>("");
 
   const [myPoints, setMyPoints] = useState<number>(0);
   const [enemyPoints, setEnemyPoints] = useState<number>(0);
+  const [pointsChange, setPointsChange] = useState<boolean>(false); // Just for triggering useEffect when points change to same value
 
-  const socketInitializer = async () => {
+  const [paused, setPaused] = useState<boolean>(false);
+  const [down, setDown] = useState<boolean>(false);
+
+  const start = () => {
+    socket.emit("start");
+    setPaused(false);
+  };
+
+  const socketInitializer = async (username?: string) => {
     // We just call it because we don't need anything else out of it
     await fetch("/api/socket");
 
     socket = io("/horolezci-gameplay", {
       query: {
         roomName: room,
+        username: username,
       },
     });
 
@@ -46,7 +61,7 @@ export default function Page() {
       router.push("/");
     });
 
-    socket.on("start-data", (startData: HorolezciRoomGameData) => {
+    socket.on("start-data", (startData: HorolezciRoomData) => {
       setEntry(convertToInput(startData.input));
     });
     socket.on(
@@ -58,6 +73,10 @@ export default function Page() {
 
     socket.on("my-guess", (guess) => {
       socket.emit("enemy-guess", guess);
+    });
+    socket.on("enemy-char", (char) => {
+      console.log("Resending enemy char", char);
+      socket.emit("enemy-char", char);
     });
 
     socket.on("secret-sentence", (input: HorolezciPyramidChars) => {
@@ -72,9 +91,18 @@ export default function Page() {
 
     socket.on("wrong", () => {
       setMyPoints((prev) => (prev - 8 < 0 ? 0 : prev - 8));
+      setPointsChange((prev) => !prev);
+      socket.emit("stop");
+      setDown(true);
     });
     socket.on("correct", (value: number) => {
       setMyPoints((prev) => prev + value);
+      setPointsChange((prev) => !prev);
+      socket.emit("stop");
+      setDown(false);
+    });
+    socket.on("stop-enemy", () => {
+      socket.emit("stop-enemy");
     });
 
     socket.on("wrong-enemy", () => {
@@ -94,25 +122,49 @@ export default function Page() {
   }, [myPoints, enemyPoints]);
 
   useEffect(() => {
-    handleConnection(router, room, setRoom, socketInitializer);
+    const connect = async () => {
+      const token = getCookie("token");
+      if (!token) return router.push("/");
+
+      const res = await fetch(`/api/users/tokenCheck?token=${token}`);
+      if (!res.ok) return router.push("/");
+
+      const data = (await res.json()) as SupabaseUser;
+      setUsername(data.username);
+
+      handleConnection(router, room, setRoom, socketInitializer, data.username);
+    };
+    void connect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
+  useEffect(() => {
+    setPaused(true);
+    const timeout = setTimeout(() => {
+      socket.emit("start");
+      setPaused(false);
+      clearTimeout(timeout);
+    }, 2500);
+  }, [myPoints, pointsChange]);
+
   return (
     <>
+      <GameLoader start={start} />
+
       <div className="absolute right-1/2 top-10 z-[999999] flex w-full translate-x-1/2 justify-between px-20 text-white">
         <div className="flex flex-col items-center text-xl">
           <h4>Your score:</h4>
           <span className="font-semibold">{myPoints}</span>
         </div>
-        <p className="text-4xl">{time}</p>
+        <p className="ml-6 text-4xl">{time}</p>
         <div className="flex flex-col items-center text-xl">
           <h4>Enemy score:</h4>
           <span className="font-semibold">{enemyPoints}</span>
         </div>
       </div>
 
-      <InputPyramid chars={input} socket={socket} />
+      {!paused && <InputPyramid chars={input} socket={socket} />}
+
       <div className="h-full w-full">
         <div className="relative h-full w-full">
           <Image
@@ -121,13 +173,31 @@ export default function Page() {
             priority
             className="absolute -bottom-0 right-1/2 translate-x-1/2 transition-all duration-1000"
           />
-          <div className="absolute bottom-[0%] right-1/2 h-10 w-3 bg-red-600" />
+          <Horolezec
+            className="absolute right-1/2 z-[9999] w-20 -translate-x-20 transition-all delay-300 duration-[2000ms]"
+            style={{ bottom: `${myPoints}%` }}
+            paused={paused}
+            down={down}
+            enemy={true}
+          />
+          <Horolezec
+            className="absolute right-1/2 z-[9999] w-20 translate-x-28 transition-all delay-300 duration-[2000ms]"
+            style={{ bottom: `${enemyPoints}%` }}
+            paused={paused}
+            down={down}
+            enemy={false}
+          />
         </div>
-        <div className="absolute bottom-0 z-[999999] h-64 w-full bg-gray-800 p-2 text-white">
-          <h2 className="mb-3 text-center text-3xl">Známý citát</h2>
-          <SecretSentence secret={entry} />
-        </div>
+
+        {!paused && (
+          <div className="absolute bottom-0 z-[999999] h-64 w-full overflow-auto bg-gray-800 p-2 text-white">
+            <h2 className="mb-3 text-center text-3xl">Známý citát</h2>
+            <SecretSentence secret={entry} />
+          </div>
+        )}
       </div>
+
+      <div className="absolute left-0 top-0 h-full w-full bg-black/30"></div>
     </>
   );
 }
