@@ -32,6 +32,7 @@ export default function Page() {
   const [room, setRoom] = useState<string>("");
   const [time, setTime] = useState<number>();
   const [username, setUsername] = useState<string>("");
+  const [enemyUsername, setEnemyUsername] = useState<string>("");
 
   const [myPoints, setMyPoints] = useState<number>(0);
   const [enemyPoints, setEnemyPoints] = useState<number>(0);
@@ -59,6 +60,10 @@ export default function Page() {
     socket.on("error", (error) => {
       toast.error(error);
       router.push("/");
+    });
+
+    socket.on("enemy", (username) => {
+      setEnemyUsername(username);
     });
 
     socket.on("start-data", (startData: HorolezciRoomData) => {
@@ -153,12 +158,12 @@ export default function Page() {
 
       <div className="absolute right-1/2 top-10 z-[999999] flex w-full translate-x-1/2 justify-between px-20 text-white">
         <div className="flex flex-col items-center text-xl">
-          <h4>Your score:</h4>
+          <h4>{username}&apos;s score:</h4>
           <span className="font-semibold">{myPoints}</span>
         </div>
         <p className="ml-6 text-4xl">{time}</p>
         <div className="flex flex-col items-center text-xl">
-          <h4>Enemy score:</h4>
+          <h4>{enemyUsername}&apos;s score:</h4>
           <span className="font-semibold">{enemyPoints}</span>
         </div>
       </div>
@@ -191,7 +196,7 @@ export default function Page() {
 
         {!paused && (
           <div className="absolute bottom-0 z-[999999] h-64 w-full overflow-auto bg-gray-800 p-2 text-white">
-            <h2 className="mb-3 text-center text-3xl">Známý citát</h2>
+            <h2 className="mb-3 text-center text-3xl">Tajenka</h2>
             <SecretSentence secret={entry} />
           </div>
         )}

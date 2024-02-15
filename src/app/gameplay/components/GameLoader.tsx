@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { LoadingSpinnerGreen } from "@/app/components/loading-spinner-green";
 
 interface Props {
-  start: () => void;
+  start?: () => void;
 }
 
 export const GameLoader: FC<Props> = ({ start }) => {
@@ -10,7 +10,9 @@ export const GameLoader: FC<Props> = ({ start }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      start();
+      if (start !== undefined) {
+        start();
+      }
       setLoading(false);
     }, 3500);
 

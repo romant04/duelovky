@@ -1,4 +1,4 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { NextApiRequest } from "next";
 import {
   FotbalRoomData,
@@ -25,8 +25,6 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
-  let horolezciQ: Socket[] = [];
-
   if (res.socket.server.io) {
     console.log("Server already started");
     res.end();
@@ -155,6 +153,14 @@ export default function handler(
     };
 
     const room = findOrCreateRoom();
+
+    if (room.players.find((x) => x.id !== socket.id)?.username) {
+      socket.emit(
+        "enemy",
+        room.players.find((x) => x.id !== socket.id)!.username
+      );
+    }
+    socket.to(roomName).emit("enemy", username);
 
     socket.emit("start-data", room);
 
@@ -442,10 +448,30 @@ export default function handler(
         ?.guessedWords.push(word);
     });
 
+    let stopped = true;
+    let stoppedEnemy = true;
+
+    socket.on("stop", () => {
+      stopped = true;
+      socket.to(roomName).emit("stop-enemy");
+    });
+    socket.on("stop-enemy", () => {
+      stoppedEnemy = true;
+    });
+    socket.on("start", () => {
+      stopped = false;
+      stoppedEnemy = false;
+    });
+
     if (room.players[0].username === username) {
       let time = 360;
       let round = 1;
       setInterval(() => {
+        if (stopped && stoppedEnemy) {
+          time = 360;
+          return;
+        }
+
         time--;
 
         socket.emit("time", time);

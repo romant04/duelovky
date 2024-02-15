@@ -16,6 +16,7 @@ import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { handleConnection } from "@/app/gameplay/utils/handleConnection";
+import { GameLoader } from "@/app/gameplay/components/GameLoader";
 
 let socket: Socket;
 
@@ -184,6 +185,7 @@ export default function Page() {
 
   return (
     <>
+      <GameLoader />
       <ColorSelectDialog
         svrsek={activeSvrsek as Card}
         socket={socket}

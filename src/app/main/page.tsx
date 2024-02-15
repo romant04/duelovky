@@ -13,6 +13,8 @@ export default function Home() {
               title={game_data.title}
               description={game_data.description}
               tags={game_data.tags}
+              mobile={game_data.mobile}
+              image={game_data.image}
             />
           </Link>
         ))}
