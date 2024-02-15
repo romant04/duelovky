@@ -11,6 +11,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { v4 as uuid } from "uuid";
 import { FriendWaitDialog } from "@/app/components/wait-dialog/friend-wait-dialog";
+import { MobileNotSupported } from "@/app/components/games/mobile-not-supported";
+import Image from "next/image";
 
 let socket: Socket;
 
@@ -94,9 +96,11 @@ function Page({ params }: { params: { game_id: string } }) {
         setIsOpen={setIsOpenCode}
       />
       <div className="mt-10 flex w-full flex-col gap-8 px-5 pb-5 md:mx-auto md:flex-row lg:w-4/5">
-        <div className="h-80 min-h-[20em] w-full min-w-[20em] bg-red-600 md:w-80">
-          Placeholder for image
+        <div className="h-80 min-h-[20em] w-full min-w-[20em] border-2 border-white bg-gray-600 md:w-[40%]">
+          <Image src={gameData.image} alt="" className="h-full object-cover" />
         </div>
+        {!gameData.mobile && <MobileNotSupported />}
+
         <div className="flex max-w-3xl flex-col gap-4">
           <h1 className="text-4xl">{gameData?.title}</h1>
           <p className="text-lg">{gameData?.long_description}</p>

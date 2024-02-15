@@ -1,5 +1,8 @@
 import { GameData } from "@/types/game";
 import { tags } from "@/app/components/games/game-tag";
+import fotbal from "@/app/assets/game_previews/fotbal.png";
+import horolezci from "@/app/assets/game_previews/horolezci.png";
+import prsi from "@/app/assets/game_previews/prsi.png";
 
 export const GAME_DATA: GameData[] = [
   {
@@ -9,6 +12,8 @@ export const GAME_DATA: GameData[] = [
     long_description:
       "Horolezci jsou vědomstní hra pro 2 hráče. Hráči spolu závodí, kdo se dřív dostane na vrchol hory. Při každém kole musí hádat jedno z několika písmen, které se musí vyskytovat ve větě, většinou pořekadlu nebo přísloví. Tuto větu vidí po celou dobu hry a vidí i písmena, která se do věty doplnila. Za špatnou odpověď, hráč klesá dolů",
     tags: [tags.vedomostni, tags.logicke],
+    mobile: false,
+    image: horolezci,
   },
   {
     title: "Prší",
@@ -17,6 +22,8 @@ export const GAME_DATA: GameData[] = [
     long_description:
       "Prší je karetní hra, která se hraje s mariášovými kartami (tyto karty obsahují 4 barvy a 8 hodnot). Cílem hry je vyprázdnit svoji ruku. Kdo se první zbaví všech karet v ruce vyhrává. Každý hráč začíná se 4 kartami. Tyto karty se dají vyhazovat na střed v případě, že karta na středu má buďto stejnou hodnotu nebo barvu, pokud je na středu sedma je hráč nucen také zahrát sedmu nebo si musí líznout 2 karty za každou sedmu, která byla vyložena v řadě. Pokud nemá žádnou kartu, kterou by mohl vyložit, líže karu a hraje protivník",
     tags: [tags.karetni, tags.logicke],
+    mobile: true,
+    image: prsi,
   },
   {
     title: "Slovní fotbal",
@@ -25,5 +32,7 @@ export const GAME_DATA: GameData[] = [
     long_description:
       "Slovní fotbal je hra se slovy, jedná se o hru jeden na jednoho, kde se snažíte s náhodných písmen složit slova, za každé slovo získáváte body podle jeho veliksoti. Slova jsou kontrolovány podle speciálně upraveného slovníku, který obsahuje pouze podstatná jména v prvním pádě. Slova která v tomto slovníku nesjou, jsou neplatná. Kdo do dopršení časového limitu získá více bodů vyhrává",
     tags: [tags.vedomostni, tags.slovni],
+    mobile: false,
+    image: fotbal,
   },
 ];

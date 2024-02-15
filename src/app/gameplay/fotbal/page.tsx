@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { LoadingSpinner } from "@/app/components/loading-spinner";
 import { getCookie } from "cookies-next";
 import { SupabaseUser } from "@/types/auth";
+import { GameLoader } from "@/app/gameplay/components/GameLoader";
 
 let socket: Socket;
 
@@ -29,6 +30,10 @@ export default function Page() {
   const [time, setTime] = useState("");
 
   const [room, setRoom] = useState<string>("");
+
+  const start = () => {
+    socket.emit("start");
+  };
 
   const checkWord = async (word: string) => {
     const res = await fetch(`/api/slovni-fotbal/slovniFotbal?word=${word}`);
@@ -137,6 +142,10 @@ export default function Page() {
     socket.on("draw", () => {
       router.push(`/gameover/draw`);
     });
+
+    socket.on("stop-enemy", () => {
+      socket.emit("stop-enemy");
+    });
   };
 
   useEffect(() => {
@@ -157,59 +166,63 @@ export default function Page() {
   }, [room]);
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${field.src})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        height: "100dvh",
-        width: "100vw",
-      }}
-    >
-      <div className="absolute right-1/2 top-10 translate-x-1/2">
-        <h1 className="text-5xl font-semibold">{time}</h1>
-      </div>
-      <InfoTab
-        name={username}
-        score={score}
-        guessed_words={guessedWords}
-        left={true}
-      />
-      <InfoTab
-        name={enemyUsername}
-        score={enemyScore}
-        guessed_words={enemyGuessedWords}
-        left={false}
-      />
-      <div className="absolute bottom-1/2 right-1/2 flex w-3/4 translate-x-1/2 translate-y-1/2 flex-col gap-5 rounded-sm bg-lime-700/50 px-20 pb-5 pt-10">
-        <div className="flex flex-wrap justify-center gap-2">
-          {guessLetters.map((letter, index) => (
-            <Letter
-              onClick={() => handleGuessLetterClick(letter, index)}
-              key={index}
-              letter={letter}
-            />
-          ))}
+    <>
+      <GameLoader start={start} />
+
+      <div
+        style={{
+          backgroundImage: `url(${field.src})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          height: "100dvh",
+          width: "100vw",
+        }}
+      >
+        <div className="absolute right-1/2 top-10 translate-x-1/2">
+          <h1 className="text-5xl font-semibold">{time}</h1>
         </div>
-        <button
-          onClick={handleGuess}
-          className="mx-auto w-full max-w-md rounded-md bg-lime-900 py-2 text-white hover:bg-lime-800"
-        >
-          {loading ? <LoadingSpinner /> : "Potvrdit"}
-        </button>
-      </div>
-      <div className="absolute bottom-0 flex w-full justify-center">
-        <div className="flex h-48 w-3/4 flex-wrap items-center justify-center gap-3 rounded-t-md bg-lime-800 p-10">
-          {letters.map((letter, index) => (
-            <Letter
-              key={index}
-              letter={letter}
-              onClick={() => handleLetterClick(letter, index)}
-            />
-          ))}
+        <InfoTab
+          name={username}
+          score={score}
+          guessed_words={guessedWords}
+          left={true}
+        />
+        <InfoTab
+          name={enemyUsername}
+          score={enemyScore}
+          guessed_words={enemyGuessedWords}
+          left={false}
+        />
+        <div className="absolute bottom-1/2 right-1/2 flex w-3/4 translate-x-1/2 translate-y-1/2 flex-col gap-5 rounded-sm bg-lime-700/50 px-20 pb-5 pt-10">
+          <div className="flex flex-wrap justify-center gap-2">
+            {guessLetters.map((letter, index) => (
+              <Letter
+                onClick={() => handleGuessLetterClick(letter, index)}
+                key={index}
+                letter={letter}
+              />
+            ))}
+          </div>
+          <button
+            onClick={handleGuess}
+            className="mx-auto w-full max-w-md rounded-md bg-lime-900 py-2 text-white hover:bg-lime-800"
+          >
+            {loading ? <LoadingSpinner /> : "Potvrdit"}
+          </button>
+        </div>
+        <div className="absolute bottom-0 flex w-full justify-center">
+          <div className="flex h-48 w-3/4 flex-wrap items-center justify-center gap-3 rounded-t-md bg-lime-800 p-10">
+            {letters.map((letter, index) => (
+              <Letter
+                key={index}
+                letter={letter}
+                onClick={() => handleLetterClick(letter, index)}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
