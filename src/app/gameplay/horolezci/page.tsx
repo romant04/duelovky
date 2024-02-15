@@ -119,9 +119,9 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (myPoints === 100) {
+    if (myPoints >= 100) {
       alert("You won!");
-    } else if (enemyPoints === 100) {
+    } else if (enemyPoints >= 100) {
       alert("You lost!");
     }
   }, [myPoints, enemyPoints]);
