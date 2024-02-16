@@ -147,6 +147,7 @@ export default function handler(
       room.players.push({
         id: socket.id,
         username: username,
+        score: 0,
       });
 
       return room;
@@ -196,6 +197,7 @@ export default function handler(
     let guess: GuessData | null = null;
     let enemyGuess: GuessData | null = null;
     let selectedLevel: number;
+    let selectedEnemyLevel: number;
 
     let stopped = true;
     let stoppedEnemy = true;
@@ -211,6 +213,10 @@ export default function handler(
     });
     socket.on("level", (level) => {
       selectedLevel = level;
+      socket.to(roomName).emit("enemy-level", level);
+    });
+    socket.on("enemy-level", (level) => {
+      selectedEnemyLevel = level;
     });
 
     socket.on("stop", () => {
@@ -224,6 +230,14 @@ export default function handler(
       stopped = false;
       stoppedEnemy = false;
     });
+
+    const handlePointChange = (score: number, player: "me" | "enemy") => {
+      if (player === "me") {
+        room.players.find((x) => x.username === username)!.score += score;
+      } else {
+        room.players.find((x) => x.username !== username)!.score += score;
+      }
+    };
 
     if (room.players[0]?.username === username) {
       let time = 30;
@@ -247,8 +261,33 @@ export default function handler(
             enemyGuess,
             roomName,
             socket,
-            selectedLevel
+            selectedLevel,
+            selectedEnemyLevel,
+            handlePointChange
           );
+
+          // Handle gameover - Draw
+          if (
+            room.players.find((x) => x.username === username)!.score >= 100 &&
+            room.players.find((x) => x.username !== username)!.score >= 100
+          ) {
+            socket.emit("draw");
+            socket.to(roomName).emit("draw");
+          }
+          // Win
+          else if (
+            room.players.find((x) => x.username === username)!.score >= 100
+          ) {
+            socket.emit("win");
+            socket.to(roomName).emit("lose");
+          }
+          // Lose
+          else if (
+            room.players.find((x) => x.username !== username)!.score >= 100
+          ) {
+            socket.emit("lose");
+            socket.to(roomName).emit("win");
+          }
 
           if (OutOfChars) {
             const random = Math.floor(Math.random() * zadani.length);

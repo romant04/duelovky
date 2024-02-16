@@ -29,7 +29,7 @@ export const horolezciZadani = [
   "Za jednu minutu člověk pozná, zda se mu někdo líbí, za hodinu pozná, zda by jej dokázal mít rád či milovat, za jeden den zjistí, jestli by s tou osobou dokázal strávit celý život… ale poté trvá celý život než na tu osobu zapomene.",
   "Vždycky se nám zdá lepší to, co nemůžeme dostat, než to, co už máme. V tom spočívá romantika a idiotství lidského života.",
   "Víte, já ho znal ještě z doby, kdy chodil každý večírek s jiným děvčetem. A najednou se oženil za ty miliony. Já mu to docela přeji. Někdo miluje duši, někdo miluje tělo, někdo miluje peníze.",
-  "Tak dlouho mě budeš štvát až ti zlomím ruku",
+  "Tak dlouho mě budeš srát až ti zlomím ruku",
   "Elektřina, čas, zemská přitažlivost, láska. Všechny síly, který uměj člověku skutečně nakopat zadek, jsou neviditelný.",
   "Kdo jinému jámu kopá, sám do ní padá.",
   "Kdo se směje naposled, ten se směje nejlíp.",
