@@ -33,6 +33,7 @@ export interface HorolezciRoomData {
   players: {
     id: string;
     username: string;
+    score: number;
   }[];
 }
 

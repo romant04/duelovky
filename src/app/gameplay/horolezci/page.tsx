@@ -21,6 +21,7 @@ import { SupabaseUser } from "@/types/auth";
 import { HorolezciRoomData } from "@/pages/api/types";
 import { Horolezec } from "@/app/gameplay/horolezci/components/horolezec";
 import { GameLoader } from "@/app/gameplay/components/GameLoader";
+import "../../scrollbar.css";
 
 let socket: Socket;
 
@@ -40,10 +41,30 @@ export default function Page() {
 
   const [paused, setPaused] = useState<boolean>(false);
   const [down, setDown] = useState<boolean>(false);
+  const [downEnemy, setDownEnemy] = useState<boolean>(false);
 
   const start = () => {
     socket.emit("start");
     setPaused(false);
+  };
+
+  const handleGameover = async (win: boolean) => {
+    const res = await fetch("/api/horolezci/updatePoints", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: username, win: win }),
+    });
+
+    if (res.ok) {
+      router.push(`/gameover/${win ? "win" : "lose"}`);
+      return;
+    }
+
+    toast.error(
+      "Něco se pokazilo, omlouváme se. Tato hra nebude započítána do statistiky."
+    );
   };
 
   const socketInitializer = async (username?: string) => {
@@ -80,7 +101,6 @@ export default function Page() {
       socket.emit("enemy-guess", guess);
     });
     socket.on("enemy-char", (char) => {
-      console.log("Resending enemy char", char);
       socket.emit("enemy-char", char);
     });
 
@@ -112,17 +132,33 @@ export default function Page() {
 
     socket.on("wrong-enemy", () => {
       setEnemyPoints((prev) => (prev - 8 < 0 ? 0 : prev - 8));
+      setDownEnemy(true);
     });
     socket.on("correct-enemy", (value: number) => {
       setEnemyPoints((prev) => prev + value);
+      setDownEnemy(false);
+    });
+
+    socket.on("enemy-level", (level: number) => {
+      socket.emit("enemy-level", level);
+    });
+
+    socket.on("lose", () => {
+      handleGameover(false);
+    });
+    socket.on("win", () => {
+      handleGameover(true);
+    });
+    socket.on("draw", () => {
+      router.push(`/gameover/draw`);
     });
   };
 
   useEffect(() => {
     if (myPoints >= 100) {
-      alert("You won!");
+      console.log("You won!");
     } else if (enemyPoints >= 100) {
-      alert("You lost!");
+      console.log("You lost!");
     }
   }, [myPoints, enemyPoints]);
 
@@ -156,12 +192,14 @@ export default function Page() {
     <>
       <GameLoader start={start} />
 
-      <div className="absolute right-1/2 top-10 z-[999999] flex w-full translate-x-1/2 justify-between px-20 text-white">
+      <p className="absolute right-1/2 top-10 z-[999999] translate-x-1/2 text-4xl text-white">
+        {time}
+      </p>
+      <div className="absolute right-1/2 top-10 z-[999999] flex w-full translate-x-1/2 items-center justify-between px-20 text-white">
         <div className="flex flex-col items-center text-xl">
           <h4>{username}&apos;s score:</h4>
           <span className="font-semibold">{myPoints}</span>
         </div>
-        <p className="ml-6 text-4xl">{time}</p>
         <div className="flex flex-col items-center text-xl">
           <h4>{enemyUsername}&apos;s score:</h4>
           <span className="font-semibold">{enemyPoints}</span>
@@ -183,19 +221,19 @@ export default function Page() {
             style={{ bottom: `${myPoints}%` }}
             paused={paused}
             down={down}
-            enemy={true}
+            enemy={false}
           />
           <Horolezec
             className="absolute right-1/2 z-[9999] w-20 translate-x-28 transition-all delay-300 duration-[2000ms]"
             style={{ bottom: `${enemyPoints}%` }}
             paused={paused}
-            down={down}
-            enemy={false}
+            down={downEnemy}
+            enemy={true}
           />
         </div>
 
         {!paused && (
-          <div className="absolute bottom-0 z-[999999] h-64 w-full overflow-auto bg-gray-800 p-2 text-white">
+          <div className="scrollbar absolute bottom-0 z-[999999] h-64 w-full overflow-auto bg-gray-800 p-2 text-white">
             <h2 className="mb-3 text-center text-3xl">Tajenka</h2>
             <SecretSentence secret={entry} />
           </div>

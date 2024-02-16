@@ -6,7 +6,7 @@ import { useMediaQuery } from "@/utils/useMediaQuery";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { NotSigned } from "@/app/hoc/not-signed";
-import "./scrollbar.css";
+import "../../scrollbar.css";
 
 function Page() {
   const { openedChat } = useSelector((state: RootState) => state.chatLayout);
