@@ -88,6 +88,11 @@ export default function handler(
         socket.emit("joined", code);
       });
 
+      socket.emit("queue", globalQueues[namespace].length);
+      setInterval(() => {
+        socket.emit("queue", globalQueues[namespace].length);
+      }, 10000);
+
       socket.on("changeMargin", (seconds) => {
         const queue = globalQueues[namespace];
         const me = queue.find((x) => x.socket === socket);
@@ -369,7 +374,7 @@ export default function handler(
     };
 
     const room = findOrCreateRoom();
-    const { deck, centerDrawn, playedCards, round, players } = room;
+    const { deck, centerDrawn, playedCards, round } = room;
 
     const swapRound = () => {
       room.round = room.players.find((id) => id !== room.round) as string;
@@ -385,7 +390,7 @@ export default function handler(
       socket.emit("center", centerDrawn);
     }
 
-    socket.emit("start-hand", deck.splice(0, 4));
+    socket.emit("start-hand", deck.splice(0, 5));
     socket.emit("round", round === socket.id);
 
     socket.on("play", (card) => {

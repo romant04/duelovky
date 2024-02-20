@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { LoadingSpinner } from "@/app/components/loading-spinner";
 import { getCookie } from "cookies-next";
 import { SupabaseUser } from "@/types/auth";
-import { GameLoader } from "@/app/gameplay/components/GameLoader";
+import { GameLoader } from "@/app/gameplay/components/game-loader";
 
 let socket: Socket;
 

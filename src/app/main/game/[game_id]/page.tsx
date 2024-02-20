@@ -13,6 +13,7 @@ import { v4 as uuid } from "uuid";
 import { FriendWaitDialog } from "@/app/components/wait-dialog/friend-wait-dialog";
 import { MobileNotSupported } from "@/app/components/games/mobile-not-supported";
 import Image from "next/image";
+import { ActivePlayers } from "@/app/gameplay/components/active-players";
 
 let socket: Socket;
 
@@ -24,6 +25,7 @@ function Page({ params }: { params: { game_id: string } }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCode, setIsOpenCode] = useState(false);
   const [code, setCode] = useState("");
+  const [activePlayers, setActivePlayers] = useState(0);
   const gameData = GAME_DATA.find((x) => x.game_id === params.game_id);
 
   const startMatchmaking = () => {
@@ -75,6 +77,10 @@ function Page({ params }: { params: { game_id: string } }) {
       localStorage.setItem("room", roomId);
       router.push(`/gameplay/${gameData?.game_id}`);
     });
+
+    socket.on("queue", (players) => {
+      setActivePlayers(players);
+    });
   };
 
   useEffect(() => {
@@ -95,32 +101,43 @@ function Page({ params }: { params: { game_id: string } }) {
         code={code}
         setIsOpen={setIsOpenCode}
       />
-      <div className="mt-10 flex w-full flex-col gap-8 px-5 pb-5 md:mx-auto md:flex-row lg:w-4/5">
-        <div className="h-80 min-h-[20em] w-full min-w-[20em] border-2 border-white bg-gray-600 md:w-[40%]">
-          <Image src={gameData.image} alt="" className="h-full object-cover" />
-        </div>
-        {!gameData.mobile && <MobileNotSupported />}
+      <div className="mt-10 flex w-full flex-col gap-8 px-5 pb-5">
+        <div className="mt-10 flex w-full flex-col gap-8 px-5 pb-5 md:mx-auto md:flex-row lg:w-4/5">
+          <div className="h-80 min-h-[20em] w-full min-w-[20em] border-2 border-white bg-gray-600 md:w-[40%]">
+            <Image
+              src={gameData.image}
+              alt=""
+              className="h-full object-cover"
+            />
+          </div>
+          {!gameData.mobile && <MobileNotSupported />}
 
-        <div className="flex max-w-3xl flex-col gap-4">
-          <h1 className="text-4xl">{gameData?.title}</h1>
-          <p className="text-lg">{gameData?.long_description}</p>
-          <div className="flex flex-wrap gap-3 text-lg">
-            {gameData?.tags.map((tag) => <GameTag key={tag} tag={tag} />)}
+          <div className="flex max-w-3xl flex-col gap-4">
+            <h1 className="text-4xl">{gameData?.title}</h1>
+            <p className="mb-4 text-lg">{gameData?.long_description}</p>
+            <ActivePlayers activePlayers={activePlayers} />
+            <div className="flex flex-wrap gap-3 text-lg">
+              {gameData?.tags.map((tag) => <GameTag key={tag} tag={tag} />)}
+            </div>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <button
+                className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"
+                onClick={startMatchmaking}
+              >
+                Hrát
+              </button>
+              <button
+                className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500"
+                onClick={generateCode}
+              >
+                Vyzvat kamárada
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <button
-              className="w-64 bg-lime-600 px-4 py-3 hover:bg-lime-500"
-              onClick={startMatchmaking}
-            >
-              Hrát
-            </button>
-            <button
-              className="w-64 bg-orange-600 px-4 py-3 hover:bg-orange-500"
-              onClick={generateCode}
-            >
-              Vyzvat kamárada
-            </button>
-          </div>
+        </div>
+        <div className="mt-5 w-full md:mx-auto md:w-4/5">
+          <h2 className="text-2xl">Pravidla a princip hry</h2>
+          {gameData.rules}
         </div>
       </div>
     </>
