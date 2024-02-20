@@ -20,7 +20,7 @@ import { getCookie } from "cookies-next";
 import { SupabaseUser } from "@/types/auth";
 import { HorolezciRoomData } from "@/pages/api/types";
 import { Horolezec } from "@/app/gameplay/horolezci/components/horolezec";
-import { GameLoader } from "@/app/gameplay/components/GameLoader";
+import { GameLoader } from "@/app/gameplay/components/game-loader";
 import "../../scrollbar.css";
 
 let socket: Socket;

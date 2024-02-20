@@ -26,7 +26,7 @@ export const FriendWaitDialog: FC<Props> = ({ isOpen, code, setIsOpen }) => {
   return (
     <div
       className={clsx(
-        "fixed left-0 top-0 flex items-center justify-center bg-black/30",
+        "fixed left-0 top-0 z-50 flex items-center justify-center bg-black/30",
         isOpen ? "visible h-full w-full" : " invisible h-0 w-0"
       )}
     >
