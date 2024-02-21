@@ -89,9 +89,13 @@ export default function handler(
       });
 
       socket.emit("queue", globalQueues[namespace].length);
-      setInterval(() => {
+      const i = setInterval(() => {
         socket.emit("queue", globalQueues[namespace].length);
       }, 10000);
+
+      socket.on("disconnect", () => {
+        clearInterval(i);
+      });
 
       socket.on("changeMargin", (seconds) => {
         const queue = globalQueues[namespace];

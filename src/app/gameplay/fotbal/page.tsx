@@ -30,10 +30,24 @@ export default function Page() {
   const [time, setTime] = useState("");
 
   const [room, setRoom] = useState<string>("");
+  const [startCond, setStartCond] = useState(false);
 
   const start = () => {
-    socket.emit("start");
+    if (socket) {
+      socket.emit("start");
+    } else {
+      setStartCond(true);
+    }
   };
+
+  useEffect(() => {
+    if (startCond) {
+      if (socket) {
+        setStartCond(false);
+        socket.emit("start");
+      }
+    }
+  }, [startCond]);
 
   const checkWord = async (word: string) => {
     const res = await fetch(`/api/slovni-fotbal/slovniFotbal?word=${word}`);
