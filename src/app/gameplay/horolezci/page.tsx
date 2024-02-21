@@ -43,10 +43,26 @@ export default function Page() {
   const [down, setDown] = useState<boolean>(false);
   const [downEnemy, setDownEnemy] = useState<boolean>(false);
 
+  const [startCond, setStartCond] = useState(false);
+
   const start = () => {
-    socket.emit("start");
-    setPaused(false);
+    if (socket) {
+      socket.emit("start");
+      setPaused(false);
+    } else {
+      setStartCond(true);
+    }
   };
+
+  useEffect(() => {
+    if (startCond) {
+      if (socket) {
+        setStartCond(false);
+        socket.emit("start");
+        setPaused(false);
+      }
+    }
+  }, [startCond]);
 
   const handleGameover = async (win: boolean) => {
     const res = await fetch("/api/horolezci/updatePoints", {
