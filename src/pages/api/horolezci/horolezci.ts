@@ -53,7 +53,7 @@ export const reviewChar = (
     pyramidGenerator.guessedChars.push(guess.guess);
     // Mine correct
     const pointChange =
-      correctChars.filter((char) => char === guess.guess).length *
+      Array.from(input).filter((char) => char === guess.guess).length *
       levelSelected;
 
     handlePointChange(pointChange, "me"); // Keep track of points on the server
@@ -101,7 +101,7 @@ export const reviewChar = (
   ) {
     pyramidGenerator.guessedChars.push(enemyGuess.guess);
     const pointChange =
-      correctChars.filter((char) => char === enemyGuess.guess).length *
+      Array.from(input).filter((char) => char === enemyGuess.guess).length *
       selectedEnemyLevel;
 
     handlePointChange(pointChange, "enemy"); // Keep track of points on the server

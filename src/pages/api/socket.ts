@@ -178,10 +178,11 @@ export default function handler(
       .toLowerCase()
       .split("")
       .filter((char) => !SOLID_CHARACTERS.includes(char));
+    correctChars = Array.from(new Set(correctChars));
 
     let guessedChars: string[] = [];
     let incorrectChars = abeceda.filter(
-      (char) => !room.input.includes(char) && !SOLID_CHARACTERS.includes(char)
+      (char) => !correctChars.includes(char) && !SOLID_CHARACTERS.includes(char)
     );
 
     let correctVowels = correctChars.filter((char) => vowels.includes(char));
@@ -307,10 +308,11 @@ export default function handler(
               .toLowerCase()
               .split("")
               .filter((char) => !SOLID_CHARACTERS.includes(char));
+            correctChars = Array.from(new Set(correctChars));
 
             incorrectChars = abeceda.filter(
               (char) =>
-                !room.input.includes(char) && !SOLID_CHARACTERS.includes(char)
+                !correctChars.includes(char) && !SOLID_CHARACTERS.includes(char)
             );
 
             correctVowels = correctChars.filter((char) =>

@@ -113,6 +113,7 @@ export const SOLID_CHARACTERS = [
   "{",
   "}",
   "-",
+  "…",
 ];
 
 export const vowels = [
