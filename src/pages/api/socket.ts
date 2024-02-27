@@ -244,8 +244,16 @@ export default function handler(
     const handlePointChange = (score: number, player: "me" | "enemy") => {
       if (player === "me") {
         room.players.find((x) => x.username === username)!.score += score;
+        // Don't allow to go less than 0
+        if (room.players.find((x) => x.username === username)!.score < 0) {
+          room.players.find((x) => x.username === username)!.score = 0;
+        }
       } else {
         room.players.find((x) => x.username !== username)!.score += score;
+        // Don't allow to go less than 0
+        if (room.players.find((x) => x.username !== username)!.score < 0) {
+          room.players.find((x) => x.username !== username)!.score = 0;
+        }
       }
     };
 
