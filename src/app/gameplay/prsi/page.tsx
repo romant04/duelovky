@@ -17,8 +17,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { handleConnection } from "@/app/gameplay/utils/handleConnection";
 import { GameLoader } from "@/app/gameplay/components/game-loader";
+import { QuickChat } from "@/app/gameplay/components/quick-chat";
+import { GameChatMessages } from "@/types/chat";
 
 let socket: Socket;
+let chat: Socket;
 
 export default function Page() {
   const router = useRouter();
@@ -34,6 +37,11 @@ export default function Page() {
   const [activeColor, setAcitveColor] = useState<COLORS | null>(null);
 
   const [room, setRoom] = useState<string>("");
+
+  const sendChatMessage = (message: GameChatMessages) => {
+    if (!chat) return;
+    chat.emit("message", message);
+  };
 
   const handlePassTurn = () => {
     if (!stop) {
@@ -94,6 +102,15 @@ export default function Page() {
       query: {
         roomName: room,
       },
+    });
+    chat = io("/game-chat", {
+      query: {
+        roomName: room,
+      },
+    });
+
+    chat.on("msg", (msg) => {
+      toast(msg);
     });
 
     socket.on("enemyPlayed", (card: Card) => {
@@ -185,6 +202,10 @@ export default function Page() {
 
   return (
     <>
+      <QuickChat
+        className="absolute bottom-8 left-8"
+        sendMessage={sendChatMessage}
+      />
       <GameLoader />
       <ColorSelectDialog
         svrsek={activeSvrsek as Card}

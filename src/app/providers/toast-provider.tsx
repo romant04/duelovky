@@ -18,6 +18,7 @@ export const ToastProvider: FC = () => {
 
   return (
     <ToastContainer
+      className="z-[99999999]"
       position="top-right"
       autoClose={2000}
       closeOnClick

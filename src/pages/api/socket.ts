@@ -20,6 +20,7 @@ import { encodeCard } from "@/utils/image-prep";
 import { shuffleArray } from "@/utils/general";
 import { getLetters } from "@/utils/fotbal";
 import { reviewChar } from "@/pages/api/horolezci/horolezci";
+import { GameChatMessages } from "@/types/chat";
 
 export default function handler(
   req: NextApiRequest,
@@ -130,6 +131,16 @@ export default function handler(
   });
 
   const horolezciRoomData: HorolezciRoomData[] = [];
+
+  io.of("game-chat").on("connection", (socket) => {
+    const query = socket.handshake.query;
+    const roomName = query.roomName as string;
+    socket.join(roomName);
+
+    socket.on("message", (message: GameChatMessages) => {
+      socket.to(roomName).emit("msg", message);
+    });
+  });
 
   io.of("horolezci-gameplay").on("connection", (socket) => {
     const query = socket.handshake.query;
