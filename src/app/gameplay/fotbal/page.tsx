@@ -12,8 +12,11 @@ import { LoadingSpinner } from "@/app/components/loading-spinner";
 import { getCookie } from "cookies-next";
 import { SupabaseUser } from "@/types/auth";
 import { GameLoader } from "@/app/gameplay/components/game-loader";
+import { GameChatMessages } from "@/types/chat";
+import { QuickChat } from "@/app/gameplay/components/quick-chat";
 
 let socket: Socket;
+let chat: Socket;
 
 export default function Page() {
   const router = useRouter();
@@ -32,6 +35,11 @@ export default function Page() {
   const [room, setRoom] = useState<string>("");
   const [startCond, setStartCond] = useState(false);
 
+  const sendChatMessage = (message: GameChatMessages) => {
+    if (!chat) return;
+    chat.emit("message", message);
+  };
+
   const start = () => {
     if (socket) {
       socket.emit("start");
@@ -39,15 +47,6 @@ export default function Page() {
       setStartCond(true);
     }
   };
-
-  useEffect(() => {
-    if (startCond) {
-      if (socket) {
-        setStartCond(false);
-        socket.emit("start");
-      }
-    }
-  }, [startCond]);
 
   const checkWord = async (word: string) => {
     const res = await fetch(`/api/slovni-fotbal/slovniFotbal?word=${word}`);
@@ -110,6 +109,15 @@ export default function Page() {
         username: username,
       },
     });
+    chat = io("/game-chat", {
+      query: {
+        roomName: room,
+      },
+    });
+
+    chat.on("msg", (msg) => {
+      toast(msg);
+    });
 
     socket.on("letters", (letters) => {
       setGuessLetters([]);
@@ -163,6 +171,15 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (startCond) {
+      if (socket) {
+        setStartCond(false);
+        socket.emit("start");
+      }
+    }
+  }, [startCond]);
+
+  useEffect(() => {
     const connect = async () => {
       const token = getCookie("token");
       if (!token) return router.push("/");
@@ -182,6 +199,10 @@ export default function Page() {
   return (
     <>
       <GameLoader start={start} />
+      <QuickChat
+        className="absolute bottom-8 left-8"
+        sendMessage={sendChatMessage}
+      />
 
       <div
         style={{

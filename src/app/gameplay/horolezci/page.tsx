@@ -22,8 +22,11 @@ import { HorolezciRoomData } from "@/pages/api/types";
 import { Horolezec } from "@/app/gameplay/horolezci/components/horolezec";
 import { GameLoader } from "@/app/gameplay/components/game-loader";
 import "../../scrollbar.css";
+import { QuickChat } from "@/app/gameplay/components/quick-chat";
+import { GameChatMessages } from "@/types/chat";
 
 let socket: Socket;
+let chat: Socket;
 
 export default function Page() {
   const router = useRouter();
@@ -45,6 +48,11 @@ export default function Page() {
 
   const [startCond, setStartCond] = useState(false);
 
+  const sendChatMessage = (message: GameChatMessages) => {
+    if (!chat) return;
+    chat.emit("message", message);
+  };
+
   const start = () => {
     if (socket) {
       socket.emit("start");
@@ -53,16 +61,6 @@ export default function Page() {
       setStartCond(true);
     }
   };
-
-  useEffect(() => {
-    if (startCond) {
-      if (socket) {
-        setStartCond(false);
-        socket.emit("start");
-        setPaused(false);
-      }
-    }
-  }, [startCond]);
 
   const handleGameover = async (win: boolean) => {
     const res = await fetch("/api/horolezci/updatePoints", {
@@ -92,6 +90,15 @@ export default function Page() {
         roomName: room,
         username: username,
       },
+    });
+    chat = io("/game-chat", {
+      query: {
+        roomName: room,
+      },
+    });
+
+    chat.on("msg", (msg) => {
+      toast(msg);
     });
 
     socket.on("error", (error) => {
@@ -171,6 +178,16 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (startCond) {
+      if (socket) {
+        setStartCond(false);
+        socket.emit("start");
+        setPaused(false);
+      }
+    }
+  }, [startCond]);
+
+  useEffect(() => {
     if (myPoints >= 100) {
       console.log("You won!");
     } else if (enemyPoints >= 100) {
@@ -207,6 +224,10 @@ export default function Page() {
   return (
     <>
       <GameLoader start={start} />
+      <QuickChat
+        className="absolute bottom-8 left-8"
+        sendMessage={sendChatMessage}
+      />
 
       <p className="absolute right-1/2 top-10 z-[999999] translate-x-1/2 text-4xl text-white">
         {time}
