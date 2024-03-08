@@ -34,6 +34,7 @@ export default function Page() {
 
   const [room, setRoom] = useState<string>("");
   const [startCond, setStartCond] = useState(false);
+  const [enemyLeft, setEnemyLeft] = useState(false);
 
   const sendChatMessage = (message: GameChatMessages) => {
     if (!chat) return;
@@ -81,6 +82,7 @@ export default function Page() {
   };
 
   const handleGameover = async (win: boolean) => {
+    if (enemyLeft) return;
     const res = await fetch("/api/slovni-fotbal/updatePoints", {
       method: "POST",
       headers: {
@@ -124,6 +126,15 @@ export default function Page() {
       setLetters(letters);
     });
 
+    socket.on("enemy-disconnect", () => {
+      toast.error(
+        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
+      );
+      setEnemyLeft(true);
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
+    });
     socket.on("points", (points) => {
       setScore((prev) => prev + points);
       setGuessedWords((prev) => prev + 1);

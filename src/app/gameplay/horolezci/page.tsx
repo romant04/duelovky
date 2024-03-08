@@ -47,6 +47,7 @@ export default function Page() {
   const [downEnemy, setDownEnemy] = useState<boolean>(false);
 
   const [startCond, setStartCond] = useState(false);
+  const [enemyLeft, setEnemyLeft] = useState(false);
 
   const sendChatMessage = (message: GameChatMessages) => {
     if (!chat) return;
@@ -63,6 +64,7 @@ export default function Page() {
   };
 
   const handleGameover = async (win: boolean) => {
+    if (enemyLeft) return;
     const res = await fetch("/api/horolezci/updatePoints", {
       method: "POST",
       headers: {
@@ -72,6 +74,7 @@ export default function Page() {
     });
 
     if (res.ok) {
+      socket.emit("true-gameover");
       router.push(`/gameover/${win ? "win" : "lose"}`);
       return;
     }
@@ -104,6 +107,16 @@ export default function Page() {
     socket.on("error", (error) => {
       toast.error(error);
       router.push("/");
+    });
+
+    socket.on("enemy-disconnect", () => {
+      toast.error(
+        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
+      );
+      setEnemyLeft(true);
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
     });
 
     socket.on("enemy", (username) => {

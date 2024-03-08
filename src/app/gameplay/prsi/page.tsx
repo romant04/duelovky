@@ -37,6 +37,7 @@ export default function Page() {
   const [activeColor, setAcitveColor] = useState<COLORS | null>(null);
 
   const [room, setRoom] = useState<string>("");
+  const [enemyLeft, setEnemyLeft] = useState(false);
 
   const sendChatMessage = (message: GameChatMessages) => {
     if (!chat) return;
@@ -113,6 +114,16 @@ export default function Page() {
       toast(msg);
     });
 
+    socket.on("enemy-disconnect", () => {
+      toast.error(
+        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
+      );
+      setEnemyLeft(true);
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
+    });
+
     socket.on("enemyPlayed", (card: Card) => {
       setCenter(card);
       if (card.value === "eso") {
@@ -166,6 +177,7 @@ export default function Page() {
   };
 
   const updatePoints = async (win: boolean) => {
+    if (enemyLeft) return;
     const token = getCookie("token");
     const res = await fetch("/api/prsi/updatePoints", {
       method: "POST",
