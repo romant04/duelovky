@@ -14,12 +14,11 @@ import {
   vowels,
 } from "@/data/horolezci";
 import { GuessData, HorolezciNewData } from "@/types/horolezci";
-import { CharacterPyramid } from "@/utils/horolezci";
+import { CharacterPyramid, reviewChar } from "@/utils/horolezci";
 import { createDeck, PlayersMatch } from "@/utils/prsi";
 import { encodeCard } from "@/utils/image-prep";
 import { shuffleArray } from "@/utils/general";
 import { getLetters } from "@/utils/fotbal";
-import { reviewChar } from "@/pages/api/horolezci/horolezci";
 import { GameChatMessages } from "@/types/chat";
 
 export default function handler(
@@ -174,6 +173,15 @@ export default function handler(
     };
 
     const room = findOrCreateRoom();
+
+    let trueGameover = false;
+    socket.on("true-gameover", () => {
+      trueGameover = true;
+    });
+    socket.on("disconnect", () => {
+      if (trueGameover) return;
+      socket.to(roomName).emit("enemy-disconnect");
+    });
 
     if (room.players.find((x) => x.id !== socket.id)?.username) {
       socket.emit(
@@ -401,6 +409,15 @@ export default function handler(
     const room = findOrCreateRoom();
     const { deck, centerDrawn, playedCards, round } = room;
 
+    let trueGameover = false;
+    socket.on("true-gameover", () => {
+      trueGameover = true;
+    });
+    socket.on("disconnect", () => {
+      if (trueGameover) return;
+      socket.to(roomName).emit("enemy-disconnect");
+    });
+
     const swapRound = () => {
       room.round = room.players.find((id) => id !== room.round) as string;
       socket.emit("round", false);
@@ -485,6 +502,15 @@ export default function handler(
     };
 
     const room = findOrCreateRoom();
+
+    let trueGameover = false;
+    socket.on("true-gameover", () => {
+      trueGameover = true;
+    });
+    socket.on("disconnect", () => {
+      if (trueGameover) return;
+      socket.to(roomName).emit("enemy-disconnect");
+    });
 
     socket.emit("letters", room.letters);
     if (room.players.find((x) => x.id !== socket.id)?.username) {
