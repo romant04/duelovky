@@ -4,6 +4,9 @@ import { faEnvelope, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { SupabaseUser } from "@/types/auth";
 import { KeyedMutator } from "swr";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { selectChat } from "@/store/chat/chat-slice";
 
 interface Props {
   user: SupabaseUser;
@@ -12,6 +15,9 @@ interface Props {
 }
 
 export const FriendTab: FC<Props> = ({ user, my_id, friend_mutate }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const removeFriend = async () => {
     const res = await fetch("/api/friends/removeFriend", {
       method: "DELETE",
@@ -31,6 +37,16 @@ export const FriendTab: FC<Props> = ({ user, my_id, friend_mutate }) => {
     await friend_mutate();
   };
 
+  const handleChatRedirection = () => {
+    dispatch(
+      selectChat({
+        id: user.id,
+        friend: { id: user.id, username: user.username },
+      })
+    );
+    router.push(`/chat`);
+  };
+
   return (
     <div className="flex items-center justify-between gap-8 py-2">
       <div className="flex items-center gap-5">
@@ -40,7 +56,7 @@ export const FriendTab: FC<Props> = ({ user, my_id, friend_mutate }) => {
         <p>{user.username}</p>
       </div>
       <div className="flex gap-6 text-xl text-lime-500">
-        <button className="hover:text-lime-600">
+        <button className="hover:text-lime-600" onClick={handleChatRedirection}>
           <FontAwesomeIcon icon={faEnvelope} />
         </button>
         <button className="hover:text-lime-600" onClick={removeFriend}>

@@ -13,9 +13,10 @@ html {
     display: grid;
     grid-template-areas:
         "nav"
-        "content";
+        "content"
+        "footer";
     min-height: 100vh;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
 }
 
 .navbar {
