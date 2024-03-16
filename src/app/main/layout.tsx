@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="cs">
       <head>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/png" href="/icon.png" />
       </head>
       <body className={inter.className}>
         <StoreProvider>
