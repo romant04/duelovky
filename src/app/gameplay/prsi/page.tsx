@@ -23,12 +23,14 @@ import { GameChatMessages } from "@/types/chat";
 let socket: Socket;
 let chat: Socket;
 
+const STARTING_HAND = 5;
+
 export default function Page() {
   const router = useRouter();
 
   const [center, setCenter] = useState<Card>();
   const [hand, setHand] = useState<Card[]>();
-  const [enemyCardsCount, setEnemyCardsCount] = useState<number>(4);
+  const [enemyCardsCount, setEnemyCardsCount] = useState<number>(STARTING_HAND);
   const [round, setRound] = useState<boolean>(false);
   const [stop, setStop] = useState<boolean>(false);
   const [sedma, setSedma] = useState<number>(0);
