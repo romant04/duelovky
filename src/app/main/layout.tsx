@@ -1,5 +1,4 @@
 import "./globals.css";
-import type { Metadata } from "next";
 import React from "react";
 import { Inter } from "next/font/google";
 import { Navbar } from "@/app/components/layout/navbar/navbar";
@@ -11,11 +10,6 @@ import { Footer } from "@/app/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Duelovky",
-  description: "Zábavné online hry",
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -24,7 +18,13 @@ export default function RootLayout({
   return (
     <html lang="cs">
       <head>
+        <title>Duelovky</title>
+        <meta
+          name="description"
+          content="Online hry pro dva hráče. Horolezci, Prší, Slovní fotbal. Portál který spojuje hráče a hráčky po celé republice"
+        />
         <link rel="shortcut icon" type="image/png" href="/icon.png" />
+        <link rel="canonical" href="https://duelovky.net/" />
       </head>
       <body className={inter.className}>
         <StoreProvider>
