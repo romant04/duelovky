@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import React from "react";
 import { Inter } from "next/font/google";
 import { StoreProvider } from "@/app/providers/store-provider";
@@ -6,11 +5,6 @@ import "./globals.css";
 import { ToastProvider } from "@/app/providers/toast-provider";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Duelovky",
-  description: "Zábavné online hry",
-};
 
 export default function RootLayout({
   children,
@@ -20,6 +14,7 @@ export default function RootLayout({
   return (
     <html lang="cs">
       <head>
+        <title>Duelovky | gameplay</title>
         <link rel="shortcut icon" type="image/png" href="/icon.png" />
       </head>
       <body className={inter.className}>
