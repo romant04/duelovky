@@ -64,7 +64,7 @@ function Page({ params }: { params: { game_id: string; code: string } }) {
           <button
             className="w-1/2 rounded-sm bg-red-600 px-4 py-2 text-white hover:bg-red-500"
             onClick={() => {
-              router.push("/");
+              router.push("/main");
             }}
           >
             Přejít do hlavního menu

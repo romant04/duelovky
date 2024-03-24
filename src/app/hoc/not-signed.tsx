@@ -13,7 +13,7 @@ export const NotSigned = (Component: FC<any>) =>
 
     if (!mounted) return null;
 
-    if (!user && mounted) router.push("/prihlaseni");
+    if (!user && mounted) router.push("/main/prihlaseni");
 
     if (user) return <Component {...props} />;
   };

@@ -106,7 +106,7 @@ export default function Page() {
 
     socket.on("error", (error) => {
       toast.error(error);
-      router.push("/");
+      router.push("/main");
     });
 
     socket.on("enemy-disconnect", () => {
@@ -115,7 +115,7 @@ export default function Page() {
       );
       setEnemyLeft(true);
       setTimeout(() => {
-        router.push("/");
+        router.push("/main");
       }, 3000);
     });
 

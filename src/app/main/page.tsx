@@ -8,7 +8,7 @@ export default function Home() {
       <h1 className="text-4xl">Online hry</h1>
       <div className="mt-10 grid grid-cols-1 gap-4 px-2 sm:grid-cols-2 md:grid-cols-3">
         {GAME_DATA.map((game_data) => (
-          <Link href={`/game/${game_data.game_id}`} key={game_data.title}>
+          <Link href={`/main/game/${game_data.game_id}`} key={game_data.title}>
             <GameTile
               title={game_data.title}
               description={game_data.description}

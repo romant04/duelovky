@@ -7,6 +7,7 @@ import NextTopLoader from "nextjs-toploader";
 import { ToastProvider } from "@/app/providers/toast-provider";
 import { PageLoader } from "@/app/components/page-loader/page-loader";
 import { Footer } from "@/app/components/footer";
+import { clsx } from "clsx";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,9 +25,9 @@ export default function RootLayout({
           content="Online hry pro dva hráče. Horolezci, Prší, Slovní fotbal. Portál který spojuje hráče a hráčky po celé republice"
         />
         <link rel="shortcut icon" type="image/png" href="/icon.png" />
-        <link rel="canonical" href="https://duelovky.net/" />
+        <link rel="canonical" href="https://duelovky.net/main" />
       </head>
-      <body className={inter.className}>
+      <body className={clsx(inter.className, "overflow-auto")}>
         <StoreProvider>
           <NextTopLoader
             color="#65a30d"

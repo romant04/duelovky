@@ -44,7 +44,7 @@ export const FriendTab: FC<Props> = ({ user, my_id, friend_mutate }) => {
         friend: { id: user.id, username: user.username },
       })
     );
-    router.push(`/chat`);
+    router.push(`/main/chat`);
   };
 
   return (
