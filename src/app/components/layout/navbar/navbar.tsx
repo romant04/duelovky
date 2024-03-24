@@ -53,12 +53,12 @@ export const Navbar: FC = () => {
         >
           <h1 className="text-4xl font-light text-gray-200">Duelovky</h1>
           <div className="flex gap-16 text-lg">
-            <NavbarLink text="Hry" link="/" />
-            <NavbarLink text="Žebříček" link="/zebricek" />
-            <NavbarLink text="Přátelé" link="/pratele">
+            <NavbarLink text="Hry" link="/main" />
+            <NavbarLink text="Žebříček" link="/main/zebricek" />
+            <NavbarLink text="Přátelé" link="/main/pratele">
               <div className="flex w-full flex-col gap-2 p-2">
-                <InnerLink text="Moji kamarádi" link="/pratele" />
-                <InnerLink text="Chat" link="/chat" />
+                <InnerLink text="Moji kamarádi" link="/main/pratele" />
+                <InnerLink text="Chat" link="/main/chat" />
               </div>
             </NavbarLink>
           </div>

@@ -36,7 +36,10 @@ export const NavbarUser: FC<Props> = ({ user }) => {
           </button>
         </div>
       ) : (
-        <Link onClick={() => dispatch(navbarDialogClose())} href="/prihlaseni">
+        <Link
+          onClick={() => dispatch(navbarDialogClose())}
+          href="/main/prihlaseni"
+        >
           <button className="flex items-center gap-3 font-semibold text-lime-600 hover:text-lime-700">
             <FontAwesomeIcon className="h-7" icon={faUser} /> Přihlásit
           </button>

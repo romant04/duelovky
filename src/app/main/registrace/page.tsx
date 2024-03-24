@@ -204,7 +204,10 @@ export default function Page() {
       </form>
       <p className="self-start">
         Máš už účet ? můžeš se přihlásit{" "}
-        <a className="text-lime-700 hover:text-lime-800" href="/prihlaseni">
+        <a
+          className="text-lime-700 hover:text-lime-800"
+          href="/main/prihlaseni"
+        >
           zde
         </a>
         .

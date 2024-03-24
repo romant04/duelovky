@@ -122,7 +122,7 @@ export default function Page() {
       );
       setEnemyLeft(true);
       setTimeout(() => {
-        router.push("/");
+        router.push("/main");
       }, 3000);
     });
 

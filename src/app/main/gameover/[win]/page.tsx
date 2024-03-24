@@ -26,13 +26,13 @@ export default function Page({
       <div className="mt-12 flex gap-10">
         <Link
           className="rounded-sm bg-lime-600 px-4 py-2 text-center text-lg hover:bg-lime-500"
-          href="/"
+          href="/main"
         >
           Hlavní menu
         </Link>
         <Link
           className="rounded-sm bg-orange-600 px-4 py-2 text-center text-lg hover:bg-orange-500"
-          href="/zebricek"
+          href="/main/zebricek"
         >
           Žebříček
         </Link>
