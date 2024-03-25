@@ -14,6 +14,7 @@ import { InputField } from "@/app/components/auth-forms/input-field";
 import { LoadingSpinner } from "@/app/components/loading-spinner";
 import { toast } from "react-toastify";
 import { setCookie } from "cookies-next";
+import Link from "next/link";
 
 interface Errors {
   usernameError: string;
@@ -204,12 +205,12 @@ export default function Page() {
       </form>
       <p className="self-start">
         Máš už účet ? můžeš se přihlásit{" "}
-        <a
+        <Link
           className="text-lime-700 hover:text-lime-800"
           href="/main/prihlaseni"
         >
           zde
-        </a>
+        </Link>
         .
       </p>
     </div>
