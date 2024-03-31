@@ -92,7 +92,7 @@ export default function Page() {
     });
 
     if (res.ok) {
-      router.push(`/gameover/${win ? "win" : "lose"}`);
+      router.push(`/main/gameover/${win ? "win" : "lose"}`);
       return;
     }
 
