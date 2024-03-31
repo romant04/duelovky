@@ -42,12 +42,12 @@ export const NavbarDialog: FC<Props> = ({ user }) => {
         </div>
 
         <div className="flex flex-col items-center gap-16 text-lg">
-          <NavbarLink text="Hry" link="/" />
-          <NavbarLink text="Žebříček" link="/zebricek" />
-          <NavbarLink text="Přátelé" link="/pratele">
+          <NavbarLink text="Hry" link="/main" />
+          <NavbarLink text="Žebříček" link="/main/zebricek" />
+          <NavbarLink text="Přátelé" link="/main/pratele">
             <div className="flex w-full flex-col gap-2 p-2">
-              <InnerLink text="Moji kamarádi" link="/pratele" />
-              <InnerLink text="Chat" link="/chat" />
+              <InnerLink text="Moji kamarádi" link="/main/pratele" />
+              <InnerLink text="Chat" link="/main/chat" />
             </div>
           </NavbarLink>
         </div>
