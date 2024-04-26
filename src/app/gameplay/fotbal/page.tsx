@@ -1,7 +1,7 @@
 "use client";
 
 import io, { Socket } from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { handleConnection } from "@/app/gameplay/utils/handleConnection";
 import field from "@/app/assets/slovni-fotbal/field.jpg";
@@ -67,6 +67,10 @@ export default function Page() {
     } else {
       toast.error("Špatně!");
     }
+
+    // return all letters
+    setLetters((prev) => [...prev, ...guessLetters]);
+    setGuessLetters([]);
   };
 
   const handleLetterClick = (letter: string, index: number) => {
@@ -206,6 +210,31 @@ export default function Page() {
     void connect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
+
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (letters.includes(e.key)) {
+        handleLetterClick(e.key, letters.indexOf(e.key));
+      }
+      if (e.key === "Enter") void handleGuess();
+      if (e.key === "Backspace") {
+        if (guessLetters.length === 0) return;
+        handleGuessLetterClick(
+          guessLetters[guessLetters.length - 1],
+          guessLetters.length - 1
+        );
+      }
+    },
+    [letters, guessLetters]
+  );
+  useEffect(() => {
+    document.removeEventListener("keyup", handleKeyPress, true);
+    document.addEventListener("keyup", handleKeyPress, true);
+
+    return () => {
+      document.removeEventListener("keyup", handleKeyPress, true);
+    };
+  }, [letters]);
 
   return (
     <>
