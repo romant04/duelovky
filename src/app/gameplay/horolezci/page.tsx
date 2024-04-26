@@ -201,14 +201,6 @@ export default function Page() {
   }, [startCond]);
 
   useEffect(() => {
-    if (myPoints >= 100) {
-      console.log("You won!");
-    } else if (enemyPoints >= 100) {
-      console.log("You lost!");
-    }
-  }, [myPoints, enemyPoints]);
-
-  useEffect(() => {
     const connect = async () => {
       const token = getCookie("token");
       if (!token) return router.push("/");
