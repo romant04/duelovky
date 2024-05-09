@@ -49,6 +49,9 @@ export default function Page() {
   const [startCond, setStartCond] = useState(false);
   const [enemyLeft, setEnemyLeft] = useState(false);
 
+  const [opponentLeft, setOpponentLeft] = useState(false);
+  const [left, setLeft] = useState(false);
+
   const sendChatMessage = (message: GameChatMessages) => {
     if (!chat) return;
     chat.emit("message", message);
@@ -110,13 +113,15 @@ export default function Page() {
     });
 
     socket.on("enemy-disconnect", () => {
-      toast.error(
-        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
-      );
-      setEnemyLeft(true);
+      socket.emit("is-he-alive");
+      setOpponentLeft(true);
       setTimeout(() => {
-        router.push("/main");
-      }, 3000);
+        setLeft(true);
+      }, 1500);
+    });
+
+    socket.on("enemy-back", () => {
+      setOpponentLeft(false);
     });
 
     socket.on("enemy", (username) => {
@@ -189,6 +194,24 @@ export default function Page() {
       router.push(`/gameover/draw`);
     });
   };
+
+  useEffect(() => {
+    if (!left) {
+      return;
+    }
+
+    if (opponentLeft) {
+      toast.error(
+        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
+      );
+      setEnemyLeft(true);
+      setTimeout(() => {
+        router.push("/main");
+      }, 3000);
+    } else if (!opponentLeft) {
+      setLeft(false);
+    }
+  }, [left, opponentLeft]);
 
   useEffect(() => {
     if (startCond) {

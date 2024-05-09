@@ -182,6 +182,16 @@ export default function handler(
       if (trueGameover) return;
       socket.to(roomName).emit("enemy-disconnect");
     });
+    socket.on("is-he-alive", () => {
+      socket.to(roomName).emit("do-you-live");
+    });
+    socket.on("do-you-live", () => {
+      socket.to(roomName).emit("enemy-back");
+    });
+
+    socket.on("enemy-back", () => {
+      socket.emit("enemy-back");
+    });
 
     if (room.players.find((x) => x.id !== socket.id)?.username) {
       socket.emit(
@@ -417,6 +427,16 @@ export default function handler(
       if (trueGameover) return;
       socket.to(roomName).emit("enemy-disconnect");
     });
+    socket.on("is-he-alive", () => {
+      socket.to(roomName).emit("do-you-live");
+    });
+    socket.on("do-you-live", () => {
+      socket.to(roomName).emit("enemy-back");
+    });
+
+    socket.on("enemy-back", () => {
+      socket.emit("enemy-back");
+    });
 
     const swapRound = () => {
       room.round = room.players.find((id) => id !== room.round) as string;
@@ -510,6 +530,16 @@ export default function handler(
     socket.on("disconnect", () => {
       if (trueGameover) return;
       socket.to(roomName).emit("enemy-disconnect");
+    });
+    socket.on("is-he-alive", () => {
+      socket.to(roomName).emit("do-you-live");
+    });
+    socket.on("do-you-live", () => {
+      socket.to(roomName).emit("enemy-back");
+    });
+
+    socket.on("enemy-back", () => {
+      socket.emit("enemy-back");
     });
 
     socket.emit("letters", room.letters);

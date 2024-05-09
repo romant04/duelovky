@@ -41,6 +41,9 @@ export default function Page() {
   const [room, setRoom] = useState<string>("");
   const [enemyLeft, setEnemyLeft] = useState(false);
 
+  const [opponentLeft, setOpponentLeft] = useState(false);
+  const [left, setLeft] = useState(false);
+
   const sendChatMessage = (message: GameChatMessages) => {
     if (!chat) return;
     chat.emit("message", message);
@@ -117,13 +120,15 @@ export default function Page() {
     });
 
     socket.on("enemy-disconnect", () => {
-      toast.error(
-        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
-      );
-      setEnemyLeft(true);
+      socket.emit("is-he-alive");
+      setOpponentLeft(true);
       setTimeout(() => {
-        router.push("/main");
-      }, 3000);
+        setLeft(true);
+      }, 1500);
+    });
+
+    socket.on("enemy-back", () => {
+      setOpponentLeft(false);
     });
 
     socket.on("enemyPlayed", (card: Card) => {
@@ -198,6 +203,24 @@ export default function Page() {
       "Něco se pokazilo, omlouváme se. Tato hra nebude započítána do statistiky."
     );
   };
+
+  useEffect(() => {
+    if (!left) {
+      return;
+    }
+
+    if (opponentLeft) {
+      toast.error(
+        "Protihráč se odpojil! Za chvíli budeš taky odpojen (tato hra nebude započítána)"
+      );
+      setEnemyLeft(true);
+      setTimeout(() => {
+        router.push("/main");
+      }, 3000);
+    } else if (!opponentLeft) {
+      setLeft(false);
+    }
+  }, [left, opponentLeft]);
 
   useEffect(() => {
     handleConnection(router, room, setRoom, socketInitializer);
