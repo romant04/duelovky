@@ -174,14 +174,6 @@ export default function handler(
 
     const room = findOrCreateRoom();
 
-    let trueGameover = false;
-    socket.on("true-gameover", () => {
-      trueGameover = true;
-    });
-    socket.on("disconnect", () => {
-      if (trueGameover) return;
-      socket.to(roomName).emit("enemy-disconnect");
-    });
     socket.on("is-he-alive", () => {
       socket.to(roomName).emit("do-you-live");
     });
@@ -419,14 +411,6 @@ export default function handler(
     const room = findOrCreateRoom();
     const { deck, centerDrawn, playedCards, round } = room;
 
-    let trueGameover = false;
-    socket.on("true-gameover", () => {
-      trueGameover = true;
-    });
-    socket.on("disconnect", () => {
-      if (trueGameover) return;
-      socket.to(roomName).emit("enemy-disconnect");
-    });
     socket.on("is-he-alive", () => {
       socket.to(roomName).emit("do-you-live");
     });
@@ -523,21 +507,12 @@ export default function handler(
 
     const room = findOrCreateRoom();
 
-    let trueGameover = false;
-    socket.on("true-gameover", () => {
-      trueGameover = true;
-    });
-    socket.on("disconnect", () => {
-      if (trueGameover) return;
-      socket.to(roomName).emit("enemy-disconnect");
-    });
     socket.on("is-he-alive", () => {
       socket.to(roomName).emit("do-you-live");
     });
     socket.on("do-you-live", () => {
       socket.to(roomName).emit("enemy-back");
     });
-
     socket.on("enemy-back", () => {
       socket.emit("enemy-back");
     });
