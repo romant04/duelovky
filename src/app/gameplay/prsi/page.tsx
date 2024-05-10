@@ -41,7 +41,7 @@ export default function Page() {
   const [room, setRoom] = useState<string>("");
   const [enemyLeft, setEnemyLeft] = useState(false);
 
-  const [opponentLeft, setOpponentLeft] = useState(false);
+  const [opponentLeft, setOpponentLeft] = useState(true);
   const [left, setLeft] = useState(false);
 
   const sendChatMessage = (message: GameChatMessages) => {
@@ -119,16 +119,11 @@ export default function Page() {
       toast(msg);
     });
 
-    socket.on("enemy-disconnect", () => {
-      socket.emit("is-he-alive");
-      setOpponentLeft(true);
-      setTimeout(() => {
-        setLeft(true);
-      }, 1500);
-    });
-
     socket.on("enemy-back", () => {
       setOpponentLeft(false);
+    });
+    socket.on("do-you-live", () => {
+      socket.emit("do-you-live");
     });
 
     socket.on("enemyPlayed", (card: Card) => {
@@ -181,6 +176,13 @@ export default function Page() {
     socket.on("lose", () => {
       void updatePoints(false);
     });
+
+    setInterval(() => {
+      socket.emit("is-he-alive");
+    }, 6000); // we will always ask at least once until we try to check if opponent left 6? 12? 14! 18? 24? 28! 30? 36? 36!
+    setInterval(() => {
+      setLeft(true);
+    }, 14000);
   };
 
   const updatePoints = async (win: boolean) => {
@@ -219,6 +221,7 @@ export default function Page() {
       }, 3000);
     } else if (!opponentLeft) {
       setLeft(false);
+      setOpponentLeft(true);
     }
   }, [left, opponentLeft]);
 

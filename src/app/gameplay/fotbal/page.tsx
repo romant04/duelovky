@@ -36,7 +36,7 @@ export default function Page() {
   const [startCond, setStartCond] = useState(false);
   const [enemyLeft, setEnemyLeft] = useState(false);
 
-  const [opponentLeft, setOpponentLeft] = useState(false);
+  const [opponentLeft, setOpponentLeft] = useState(true); // assume that opponent left when he doesnt send opponent-back
   const [left, setLeft] = useState(false);
 
   const sendChatMessage = (message: GameChatMessages) => {
@@ -133,16 +133,11 @@ export default function Page() {
       setLetters(letters);
     });
 
-    socket.on("enemy-disconnect", () => {
-      socket.emit("is-he-alive");
-      setOpponentLeft(true);
-      setTimeout(() => {
-        setLeft(true);
-      }, 1500);
-    });
-
     socket.on("enemy-back", () => {
       setOpponentLeft(false);
+    });
+    socket.on("do-you-live", () => {
+      socket.emit("do-you-live");
     });
 
     socket.on("points", (points) => {
@@ -189,6 +184,13 @@ export default function Page() {
     socket.on("stop-enemy", () => {
       socket.emit("stop-enemy");
     });
+
+    setInterval(() => {
+      socket.emit("is-he-alive");
+    }, 6000); // we will always ask at least once until we try to check if opponent left 6? 12? 14! 18? 24? 28! 30? 36? 36!
+    setInterval(() => {
+      setLeft(true);
+    }, 14000);
   };
 
   useEffect(() => {
@@ -206,6 +208,7 @@ export default function Page() {
       }, 3000);
     } else if (!opponentLeft) {
       setLeft(false);
+      setOpponentLeft(true);
     }
   }, [left, opponentLeft]);
 
