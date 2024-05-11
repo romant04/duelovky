@@ -19,6 +19,7 @@ import { handleConnection } from "@/app/gameplay/utils/handleConnection";
 import { GameLoader } from "@/app/gameplay/components/game-loader";
 import { QuickChat } from "@/app/gameplay/components/quick-chat";
 import { GameChatMessages } from "@/types/chat";
+import Cookies from "js-cookie";
 
 let socket: Socket;
 let chat: Socket;
@@ -237,6 +238,17 @@ export default function Page() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hand]);
+
+  // handle reload
+  useEffect(() => {
+    if (Cookies.get("reload")) {
+      toast.error("Prosím neobnovuj stránku, hra se ukončí!");
+      setTimeout(() => {
+        router.push("/main");
+      }, 3000);
+    }
+    Cookies.set("reload", "true");
+  }, []);
 
   const tokenPosition = round ? "bottom-0" : "translate-y-[100%] bottom-[100%]";
 

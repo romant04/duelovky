@@ -24,6 +24,7 @@ import { GameLoader } from "@/app/gameplay/components/game-loader";
 import "../../scrollbar.css";
 import { QuickChat } from "@/app/gameplay/components/quick-chat";
 import { GameChatMessages } from "@/types/chat";
+import Cookies from "js-cookie";
 
 let socket: Socket;
 let chat: Socket;
@@ -251,6 +252,17 @@ export default function Page() {
       clearTimeout(timeout);
     }, 2500);
   }, [myPoints, pointsChange]);
+
+  // handle reload
+  useEffect(() => {
+    if (Cookies.get("reload")) {
+      toast.error("Prosím neobnovuj stránku, hra se ukončí!");
+      setTimeout(() => {
+        router.push("/main");
+      }, 3000);
+    }
+    Cookies.set("reload", "true");
+  }, []);
 
   return (
     <>

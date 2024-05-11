@@ -14,6 +14,7 @@ import { FriendWaitDialog } from "@/app/components/wait-dialog/friend-wait-dialo
 import { MobileNotSupported } from "@/app/components/games/mobile-not-supported";
 import Image from "next/image";
 import { ActivePlayers } from "@/app/gameplay/components/active-players";
+import Cookies from "js-cookie";
 
 let socket: Socket;
 
@@ -85,6 +86,7 @@ function Page({ params }: { params: { game_id: string } }) {
 
   useEffect(() => {
     void socketInitializer();
+    Cookies.remove("reload");
   }, []);
 
   if (gameData === undefined) return <p>This game does not exist</p>;
