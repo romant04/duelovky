@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { NotSigned } from "@/app/hoc/not-signed";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import Cookies from "js-cookie";
 
 let socket: Socket;
 
@@ -39,6 +40,7 @@ function Page({ params }: { params: { game_id: string; code: string } }) {
 
   useEffect(() => {
     void socketInitializer();
+    Cookies.remove("reload");
   }, []);
 
   if (gameData === undefined) return <p>This game does not exist</p>;

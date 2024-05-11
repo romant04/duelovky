@@ -14,6 +14,7 @@ import { SupabaseUser } from "@/types/auth";
 import { GameLoader } from "@/app/gameplay/components/game-loader";
 import { GameChatMessages } from "@/types/chat";
 import { QuickChat } from "@/app/gameplay/components/quick-chat";
+import Cookies from "js-cookie";
 
 let socket: Socket;
 let chat: Socket;
@@ -262,6 +263,17 @@ export default function Page() {
       document.removeEventListener("keyup", handleKeyPress, true);
     };
   }, [letters]);
+
+  // handle reload
+  useEffect(() => {
+    if (Cookies.get("reload")) {
+      toast.error("Prosím neobnovuj stránku, hra se ukončí!");
+      setTimeout(() => {
+        router.push("/main");
+      }, 3000);
+    }
+    Cookies.set("reload", "true");
+  }, []);
 
   return (
     <>
